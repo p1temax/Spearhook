@@ -1,7 +1,8 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import { RiLink, RiMailLine } from "@remixicon/react";
+
+import { Link2, Mail } from "lucide-react";
 import { api } from "@/api";
 import { useI18n } from "@/i18n";
 import { SettingsTabs } from "@/components/layout/settings-tabs";
@@ -101,14 +102,14 @@ export default function MailTrackingSettingsPage() {
     <div className="space-y-4 p-4 md:p-6">
       <SettingsTabs
         tabs={[
-          { href: "/smtp-services", label: t("nav.smtpServices"), icon: RiMailLine },
-          { href: "/mail-tracking", label: t("nav.mailTracking"), adminOnly: true, icon: RiLink },
+          { href: "/smtp-services", label: t("nav.smtpServices"), icon: Mail },
+          { href: "/mail-tracking", label: t("nav.mailTracking"), adminOnly: true, icon: Link2 },
         ]}
       />
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl font-semibold">
-            <RiLink className="h-5 w-5" />
+            <Link2 className="h-5 w-5" />
             {t("nav.mailTracking")}
           </h1>
           <p className="text-sm text-slate-500">{t("mailTracking.subtitle")}</p>

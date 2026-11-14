@@ -1,13 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  RiChat1Line,
-  RiKanbanView2,
-  RiMailLine,
-  RiNodeTree,
-  RiPlayCircleLine,
-} from "@remixicon/react";
+
 import {
   CartesianGrid,
   Line,
@@ -17,6 +11,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import {
+  CirclePlay,
+  Kanban,
+  Mail,
+  MessageSquare,
+  Network,
+} from "lucide-react";
 import { api } from "@/api";
 import { useI18n } from "@/i18n";
 import { Badge } from "@/components/ui/badge";
@@ -178,10 +179,10 @@ function MetricLineChart({
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 12, right: 16, left: 8, bottom: 8 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis
                 dataKey="label"
-                tick={{ fontSize: 11, fill: "#94a3b8" }}
+                tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
                 minTickGap={32}
                 axisLine={false}
                 tickLine={false}
@@ -191,7 +192,7 @@ function MetricLineChart({
               />
               <YAxis
                 domain={[0, 100]}
-                tick={{ fontSize: 11, fill: "#94a3b8" }}
+                tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
                 axisLine={false}
                 tickLine={false}
                 tickMargin={6}
@@ -203,7 +204,9 @@ function MetricLineChart({
                 contentStyle={{
                   fontSize: 12,
                   borderRadius: 8,
-                  borderColor: "#e2e8f0",
+                  borderColor: "hsl(var(--border))",
+                  backgroundColor: "hsl(var(--popover))",
+                  color: "hsl(var(--popover-foreground))",
                 }}
                 formatter={(value) => [
                   value === null || value === undefined
@@ -369,14 +372,14 @@ export default function DashboardPage() {
             </CardTitle>
             <CardAction>
               <Badge variant="outline" className="gap-1">
-                <RiKanbanView2 className="h-3.5 w-3.5" />
+                <Kanban className="h-3.5 w-3.5" />
                 {ratioPercent(stats.runningProjectCount, stats.projectCount)}%
               </Badge>
             </CardAction>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 border-0 p-6 pt-0 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              <RiPlayCircleLine className="h-4 w-4 text-emerald-600" />
+              <CirclePlay className="h-4 w-4 text-emerald-600" />
               {t("dashboard.projectSummarySubtext", {
                 running: stats.runningProjectCount,
                 total: stats.projectCount,
@@ -401,7 +404,7 @@ export default function DashboardPage() {
             </CardTitle>
             <CardAction>
               <Badge variant="outline" className="gap-1">
-                <RiMailLine className="h-3.5 w-3.5" />
+                <Mail className="h-3.5 w-3.5" />
                 {t("dashboard.mailBadge")}
               </Badge>
             </CardAction>
@@ -421,7 +424,7 @@ export default function DashboardPage() {
             </CardTitle>
             <CardAction>
               <Badge variant="outline" className="gap-1">
-                <RiChat1Line className="h-3.5 w-3.5" />
+                <MessageSquare className="h-3.5 w-3.5" />
                 {t("dashboard.msgBadge")}
               </Badge>
             </CardAction>
@@ -443,7 +446,7 @@ export default function DashboardPage() {
             </CardTitle>
             <CardAction>
               <Badge variant="outline" className="gap-1">
-                <RiNodeTree className="h-3.5 w-3.5" />
+                <Network className="h-3.5 w-3.5" />
                 {ratioPercent(stats.onlineAgentCount, stats.agentCount)}%
               </Badge>
             </CardAction>
@@ -483,7 +486,7 @@ export default function DashboardPage() {
               <MetricLineChart
                 title={t("dashboard.cpuUsage")}
                 dataKey="cpu"
-                color="#2563eb"
+                color="hsl(var(--chart-1))"
                 data={samples}
                 emptyText={t("dashboard.noSamplesYet")}
                 currentLabel={t("dashboard.cores", { count: hm.cpu_cores || 0 })}
@@ -491,7 +494,7 @@ export default function DashboardPage() {
               <MetricLineChart
                 title={t("dashboard.memoryUsage")}
                 dataKey="memory"
-                color="#059669"
+                color="hsl(var(--chart-2))"
                 data={samples}
                 emptyText={t("dashboard.noSamplesYet")}
                 currentLabel={`${formatMemory(hm.memory_used_mb)} / ${formatMemory(hm.memory_total_mb)}`}

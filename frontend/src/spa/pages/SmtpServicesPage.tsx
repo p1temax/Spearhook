@@ -1,11 +1,8 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import {
-  RiAddLine,
-  RiLink,
-  RiMailLine,
-} from "@remixicon/react";
+
+import { Link2, Mail, Plus } from "lucide-react";
 import { api } from "@/api";
 import { isAdminRole, useAuthStore } from "@/auth/auth-store";
 import { useI18n } from "@/i18n";
@@ -316,20 +313,20 @@ export default function SmtpServicesPage() {
     <div className="space-y-4 p-4 md:p-6">
       <SettingsTabs
         tabs={[
-          { href: "/smtp-services", label: t("nav.smtpServices"), icon: RiMailLine },
-          { href: "/mail-tracking", label: t("nav.mailTracking"), adminOnly: true, icon: RiLink },
+          { href: "/smtp-services", label: t("nav.smtpServices"), icon: Mail },
+          { href: "/mail-tracking", label: t("nav.mailTracking"), adminOnly: true, icon: Link2 },
         ]}
       />
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl font-semibold">
-            <RiMailLine className="h-5 w-5" />
+            <Mail className="h-5 w-5" />
             {t("smtp.title")}
           </h1>
           <p className="text-sm text-slate-500">{t("smtp.subtitle")}</p>
         </div>
         <Button onClick={openCreate}>
-          <RiAddLine className="h-4 w-4" />
+          <Plus className="h-4 w-4" />
           {t("smtp.new")}
         </Button>
       </div>

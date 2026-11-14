@@ -2,10 +2,8 @@
 
 import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
-import {
-  RiBarricadeLine,
-  RiQrCodeLine,
-} from "@remixicon/react";
+
+import { Construction, QrCode } from "lucide-react";
 import { useI18n } from "@/i18n";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -20,7 +18,7 @@ const FEATURES: Record<
   "/workbench/qr-phishing": {
     titleKey: "workbench.qrPhishing",
     descKey: "workbench.qrPhishingDesc",
-    icon: RiQrCodeLine,
+    icon: QrCode,
   },
 };
 
@@ -45,7 +43,7 @@ export default function WorkbenchComingSoonPage() {
 
       <Card>
         <CardContent className="flex items-center gap-3 px-4 py-8 text-sm text-slate-600">
-          <RiBarricadeLine className="h-5 w-5 shrink-0 text-slate-400" />
+          <Construction className="h-5 w-5 shrink-0 text-slate-400" />
           <div>
             <div className="font-medium text-slate-800">{t("workbench.comingSoon")}</div>
             <div className="mt-1 text-slate-500">{t(feature.descKey)}</div>

@@ -8,6 +8,7 @@ import { normalizeRuntimeLog } from "@/utils/projectDetailHelpers";
 import { Badge } from "@/components/ui/badge";
 import { RefreshButton } from "@/components/ui/refresh-button";
 import { Card, CardContent } from "@/components/ui/card";
+import { NativeSelect } from "@/components/ui/native-select";
 import { useProjectWorkspace } from "./ProjectDetailLayout";
 
 type AgentLog = {
@@ -96,8 +97,7 @@ export default function ProjectLogs() {
           <p className="text-sm text-slate-500">{t("project.logsHelp")}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <select
-            className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm"
+          <NativeSelect
             value={source}
             onChange={(e) =>
               setSource(e.target.value === "agent" ? "agent" : "runtime")
@@ -105,7 +105,7 @@ export default function ProjectLogs() {
           >
             <option value="runtime">{t("project.runtimeLogs")}</option>
             <option value="agent">{t("project.centralProjectLogs")}</option>
-          </select>
+          </NativeSelect>
           <RefreshButton onClick={load} loading={loading} />
         </div>
       </div>
@@ -118,7 +118,7 @@ export default function ProjectLogs() {
               onScroll={() => {
                 followTailRef.current = isNearBottom(logBoxRef.current);
               }}
-              className="max-h-[70vh] overflow-auto whitespace-pre-wrap break-words bg-slate-950 p-4 font-mono text-xs text-slate-100"
+              className="max-h-[70vh] overflow-auto whitespace-pre-wrap break-words bg-[hsl(var(--code-bg))] p-4 font-mono text-xs text-[hsl(var(--code-fg))]"
             >
               {runtimeLog || t("project.noLogs")}
             </pre>

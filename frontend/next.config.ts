@@ -12,6 +12,8 @@ const apiProxyTarget =
  * same-origin (avoids CORS / cross-origin auth redirect issues).
  */
 const nextConfig: NextConfig = {
+  // The dev badge sits over the sidebar brand mark; keep local review clean.
+  devIndicators: false,
   ...(basePath
     ? {
         basePath,

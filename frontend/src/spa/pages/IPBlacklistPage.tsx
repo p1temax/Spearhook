@@ -1,7 +1,8 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import { RiGroupLine, RiShieldCrossLine } from "@remixicon/react";
+
+import { ShieldBan, Users } from "lucide-react";
 import { api } from "@/api";
 import { isAdminRole, useAuthStore } from "@/auth/auth-store";
 import { useI18n } from "@/i18n";
@@ -135,8 +136,8 @@ export default function IPBlacklistPage() {
     <div className="space-y-4 p-4 md:p-6">
       <SettingsTabs
         tabs={[
-          { href: "/ip-blacklist", label: t("nav.ipBlacklist"), icon: RiShieldCrossLine },
-          { href: "/users", label: t("nav.users"), adminOnly: true, icon: RiGroupLine },
+          { href: "/ip-blacklist", label: t("nav.ipBlacklist"), icon: ShieldBan },
+          { href: "/users", label: t("nav.users"), adminOnly: true, icon: Users },
         ]}
       />
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">

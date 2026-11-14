@@ -1,14 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  RiCalendar2Line,
-  RiCloseLine,
-} from "@remixicon/react";
+
 import { format as formatDateFns } from "date-fns";
 import { enUS, ja, ko, zhCN, zhTW } from "date-fns/locale";
 import type { Locale as DateFnsLocale } from "date-fns";
 import type { DateRange } from "react-day-picker";
+import { CalendarDays, X } from "lucide-react";
 import { api } from "@/api";
 import { useI18n } from "@/i18n";
 import type { LocaleCode } from "@/i18n/locales";
@@ -180,7 +178,7 @@ export default function AuditLogsPage() {
                 className="min-w-[13.5rem] justify-start gap-2 font-normal"
                 aria-label={t("auditLogs.dateRange")}
               >
-                <RiCalendar2Line className="h-4 w-4 shrink-0 text-slate-500" />
+                <CalendarDays className="h-4 w-4 shrink-0 text-slate-500" />
                 {rangeLabel ? (
                   <span className="truncate">{rangeLabel}</span>
                 ) : (
@@ -214,7 +212,7 @@ export default function AuditLogsPage() {
                     disabled={!from && !to}
                     onClick={clearRange}
                   >
-                    <RiCloseLine className="h-3.5 w-3.5" />
+                    <X className="h-3.5 w-3.5" />
                     {t("common.reset")}
                   </Button>
                   <Button

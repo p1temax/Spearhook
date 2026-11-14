@@ -1,11 +1,8 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import {
-  RiAddLine,
-  RiBrainAi3Line,
-  RiGlobalLine,
-} from "@remixicon/react";
+
+import { BrainCircuit, Globe, Plus } from "lucide-react";
 import { api } from "@/api";
 import { useI18n } from "@/i18n";
 import { SettingsTabs } from "@/components/layout/settings-tabs";
@@ -14,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshButton } from "@/components/ui/refresh-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -437,14 +435,14 @@ export default function AiSettingsPage() {
     <div className="space-y-4 p-4 md:p-6">
       <SettingsTabs
         tabs={[
-          { href: "/ai-settings", label: t("nav.aiSettings"), icon: RiBrainAi3Line },
-          { href: "/search-settings", label: t("nav.searchSettings"), icon: RiGlobalLine },
+          { href: "/ai-settings", label: t("nav.aiSettings"), icon: BrainCircuit },
+          { href: "/search-settings", label: t("nav.searchSettings"), icon: Globe },
         ]}
       />
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl font-semibold">
-            <RiBrainAi3Line className="h-5 w-5" />
+            <BrainCircuit className="h-5 w-5" />
             {t("nav.aiSettings")}
           </h1>
           <p className="text-sm text-slate-500">{t("aiSettings.subtitle")}</p>
@@ -452,7 +450,7 @@ export default function AiSettingsPage() {
         <div className="flex gap-2">
           <RefreshButton onClick={load} loading={loading || saving} />
           <Button onClick={openCreate}>
-            <RiAddLine className="h-4 w-4" />
+            <Plus className="h-4 w-4" />
             {t("aiSettings.addProfile")}
           </Button>
         </div>
@@ -626,9 +624,8 @@ export default function AiSettingsPage() {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="ai-api-format">{t("aiSettings.apiFormat")}</Label>
-              <select
+              <NativeSelect
                 id="ai-api-format"
-                className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
                 value={form.api_format}
                 onChange={(e) => {
                   const nextFormat = e.target.value;
@@ -655,7 +652,7 @@ export default function AiSettingsPage() {
               >
                 <option value="openai">{t("aiSettings.apiFormatOpenAI")}</option>
                 <option value="anthropic">{t("aiSettings.apiFormatAnthropic")}</option>
-              </select>
+              </NativeSelect>
               <p className="text-xs text-muted-foreground">
                 {t("aiSettings.apiFormatHint")}
               </p>

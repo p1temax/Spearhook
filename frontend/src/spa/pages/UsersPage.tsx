@@ -1,7 +1,8 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import { RiAddLine, RiGroupLine, RiShieldCrossLine } from "@remixicon/react";
+
+import { Plus, ShieldBan, Users } from "lucide-react";
 import { api } from "@/api";
 import { useAuthStore } from "@/auth/auth-store";
 import { useI18n } from "@/i18n";
@@ -169,8 +170,8 @@ export default function UsersPage() {
     <div className="space-y-4 p-4 md:p-6">
       <SettingsTabs
         tabs={[
-          { href: "/ip-blacklist", label: t("nav.ipBlacklist"), icon: RiShieldCrossLine },
-          { href: "/users", label: t("nav.users"), adminOnly: true, icon: RiGroupLine },
+          { href: "/ip-blacklist", label: t("nav.ipBlacklist"), icon: ShieldBan },
+          { href: "/users", label: t("nav.users"), adminOnly: true, icon: Users },
         ]}
       />
       <div className="flex items-center justify-between gap-2">
@@ -181,7 +182,7 @@ export default function UsersPage() {
         <div className="flex gap-2">
           <RefreshButton onClick={fetchUsers} loading={loading} />
           <Button onClick={openCreate}>
-            <RiAddLine className="h-4 w-4" />
+            <Plus className="h-4 w-4" />
             {t("users.newOperator")}
           </Button>
         </div>

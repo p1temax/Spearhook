@@ -1,7 +1,8 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import { RiAddLine, RiNodeTree, RiRobot2Line } from "@remixicon/react";
+
+import { Bot, Network, Plus } from "lucide-react";
 import { api } from "@/api";
 import { isAdminRole, useAuthStore } from "@/auth/auth-store";
 import { useI18n } from "@/i18n";
@@ -10,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -203,8 +205,8 @@ export default function RobotsPage() {
     <div className="space-y-4 p-4 md:p-6">
       <SettingsTabs
         tabs={[
-          { href: "/agents", label: t("nav.agents"), icon: RiNodeTree },
-          { href: "/robots", label: t("nav.robots"), icon: RiRobot2Line },
+          { href: "/agents", label: t("nav.agents"), icon: Network },
+          { href: "/robots", label: t("nav.robots"), icon: Bot },
         ]}
       />
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -213,7 +215,7 @@ export default function RobotsPage() {
           <p className="text-sm text-slate-500">{t("robot.subtitle")}</p>
         </div>
         <Button onClick={openCreate}>
-          <RiAddLine className="h-4 w-4" />
+          <Plus className="h-4 w-4" />
           {t("robot.newChannel")}
         </Button>
       </div>
@@ -327,9 +329,8 @@ export default function RobotsPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="robot-type">{t("robot.platform")}</Label>
-                  <select
+                  <NativeSelect
                     id="robot-type"
-                    className="flex h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm"
                     value={form.robot_type}
                     onChange={(e) =>
                       setForm({ ...form, robot_type: e.target.value })
@@ -340,7 +341,7 @@ export default function RobotsPage() {
                         {platformLabel(p)}
                       </option>
                     ))}
-                  </select>
+                  </NativeSelect>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="robot-webhook">{t("robot.webhook")}</Label>

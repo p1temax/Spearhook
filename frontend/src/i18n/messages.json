@@ -38,6 +38,7 @@
     },
     "common": {
       "actions": "Actions",
+      "dragToReorder": "Drag to reorder",
       "add": "New",
       "edit": "Edit",
       "delete": "Delete",
@@ -73,6 +74,8 @@
       "unknownError": "Unknown error",
       "deleteConfirmTitle": "Confirm deletion",
       "toggleSidebar": "Toggle sidebar",
+      "themeToDark": "Switch to dark mode",
+      "themeToLight": "Switch to light mode",
       "removeFile": "Remove file",
       "settingsSections": "Settings sections",
       "close": "Close"
@@ -1060,6 +1063,7 @@
       "emptySessions": "No sessions yet",
       "emptyMessages": "Ask anything about Agents, pages, or deployments.",
       "placeholder": "Message… (Enter to send, Shift+Enter for newline)",
+      "placeholderShort": "Message…",
       "send": "Send",
       "sending": "Generating…",
       "deleteSession": "Delete session",
@@ -1158,6 +1162,7 @@
     },
     "common": {
       "actions": "操作",
+      "dragToReorder": "拖动以重新排序",
       "add": "新建",
       "edit": "编辑",
       "delete": "删除",
@@ -1193,6 +1198,8 @@
       "unknownError": "未知错误",
       "deleteConfirmTitle": "确认删除",
       "toggleSidebar": "切换侧边栏",
+      "themeToDark": "切换到暗色模式",
+      "themeToLight": "切换到亮色模式",
       "removeFile": "移除文件",
       "settingsSections": "设置分区",
       "close": "关闭"
@@ -2180,6 +2187,7 @@
       "emptySessions": "还没有会话",
       "emptyMessages": "随便问：Agent、页面克隆、项目部署都可以。",
       "placeholder": "输入消息…（Enter 发送，Shift+Enter 换行）",
+      "placeholderShort": "输入消息…",
       "send": "发送",
       "sending": "生成中…",
       "deleteSession": "删除会话",
@@ -2278,6 +2286,7 @@
     },
     "common": {
       "actions": "操作",
+      "dragToReorder": "拖曳以重新排序",
       "add": "新增",
       "edit": "編輯",
       "delete": "刪除",
@@ -2313,6 +2322,8 @@
       "unknownError": "未知錯誤",
       "deleteConfirmTitle": "確認刪除",
       "toggleSidebar": "切換側邊欄",
+      "themeToDark": "切換到暗色模式",
+      "themeToLight": "切換到亮色模式",
       "removeFile": "移除檔案",
       "settingsSections": "設定分割槽",
       "close": "關閉"
@@ -3300,6 +3311,7 @@
       "emptySessions": "還沒有會話",
       "emptyMessages": "隨便問：Agent、頁面複製、專案部署都可以。",
       "placeholder": "輸入訊息…（Enter 傳送，Shift+Enter 換行）",
+      "placeholderShort": "輸入訊息…",
       "send": "傳送",
       "sending": "生成中…",
       "deleteSession": "刪除會話",
@@ -3398,6 +3410,7 @@
     },
     "common": {
       "actions": "操作",
+      "dragToReorder": "ドラッグして並べ替え",
       "add": "新規",
       "edit": "編集",
       "delete": "削除",
@@ -3433,6 +3446,8 @@
       "unknownError": "不明なエラー",
       "deleteConfirmTitle": "削除の確認",
       "toggleSidebar": "サイドバーを切り替え",
+      "themeToDark": "ダークモードに切り替え",
+      "themeToLight": "ライトモードに切り替え",
       "removeFile": "ファイルを削除",
       "settingsSections": "設定セクション",
       "close": "閉じる"
@@ -4420,6 +4435,7 @@
       "emptySessions": "まだセッションはありません",
       "emptyMessages": "エージェント、ページ、デプロイについて何でも質問してください。",
       "placeholder": "メッセージ… (送信するには Enter、改行には Shift+Enter)",
+      "placeholderShort": "メッセージ…",
       "send": "送信",
       "sending": "生成中…",
       "deleteSession": "セッションの削除",
@@ -4518,6 +4534,7 @@
     },
     "common": {
       "actions": "작업",
+      "dragToReorder": "드래그하여 순서 변경",
       "add": "새로 만들기",
       "edit": "편집",
       "delete": "삭제",
@@ -4553,6 +4570,8 @@
       "unknownError": "알 수 없는 오류",
       "deleteConfirmTitle": "삭제 확인",
       "toggleSidebar": "사이드바 전환",
+      "themeToDark": "다크 모드로 전환",
+      "themeToLight": "라이트 모드로 전환",
       "removeFile": "파일 제거",
       "settingsSections": "설정 섹션",
       "close": "닫기"
@@ -5540,6 +5559,7 @@
       "emptySessions": "아직 세션이 없습니다.",
       "emptyMessages": "에이전트, 페이지, 배포에 대해 무엇이든 물어보세요.",
       "placeholder": "메시지… (보내려면 Enter, 개행에는 Shift+Enter)",
+      "placeholderShort": "메시지…",
       "send": "보내기",
       "sending": "생성 중…",
       "deleteSession": "세션 삭제",

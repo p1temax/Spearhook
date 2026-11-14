@@ -22,7 +22,7 @@ export function SettingsTabs({ tabs }: { tabs: SettingsTab[] }) {
   return (
     <nav
       aria-label={t("common.settingsSections")}
-      className="inline-flex max-w-full flex-wrap items-center gap-1 rounded-lg border border-slate-200 bg-slate-100/70 p-1"
+      className="inline-flex max-w-full flex-wrap items-center gap-1 rounded-lg border border-border bg-muted/60 p-1"
     >
       {tabs
         .filter((tab) => !tab.adminOnly || isAdmin)
@@ -38,15 +38,15 @@ export function SettingsTabs({ tabs }: { tabs: SettingsTab[] }) {
               className={cn(
                 "inline-flex items-center gap-2 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-all",
                 active
-                  ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-900/5"
-                  : "text-slate-500 hover:bg-white/70 hover:text-slate-900",
+                  ? "bg-background text-foreground shadow-sm ring-1 ring-border"
+                  : "text-muted-foreground hover:bg-background/60 hover:text-foreground",
               )}
             >
               {Icon ? (
                 <Icon
                   className={cn(
                     "h-4 w-4",
-                    active ? "text-slate-700" : "text-slate-400",
+                    active ? "text-foreground" : "text-muted-foreground",
                   )}
                 />
               ) : null}

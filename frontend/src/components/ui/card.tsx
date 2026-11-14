@@ -9,7 +9,7 @@ export function Card({
     <div
       data-slot="card"
       className={cn(
-        "rounded-xl border border-border bg-card text-card-foreground shadow-sm",
+        "flex flex-col rounded-xl border border-border bg-card text-card-foreground",
         className,
       )}
       {...props}

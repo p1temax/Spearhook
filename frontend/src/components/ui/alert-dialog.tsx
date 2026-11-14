@@ -30,7 +30,7 @@ export function AlertDialogContent({
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Content
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-sm border bg-white p-6 shadow-lg",
+          "fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border bg-popover p-6 text-popover-foreground shadow-lg",
           className,
         )}
         {...props}
@@ -73,7 +73,7 @@ export function AlertDialogDescription({
 }: React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>) {
   return (
     <AlertDialogPrimitive.Description
-      className={cn("text-sm text-slate-500", className)}
+      className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />
   );

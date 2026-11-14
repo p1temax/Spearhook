@@ -12,6 +12,7 @@ import {
 import { isAdminRole, useAuthStore } from "@/auth/auth-store";
 import { api } from "@/api";
 import { AppShell } from "@/components/layout/app-shell";
+import { PageTransition } from "@/components/layout/page-transition";
 import LoginPage from "@/spa/pages/LoginPage";
 import DashboardPage from "@/spa/pages/DashboardPage";
 import WorkbenchMailPage from "@/spa/pages/WorkbenchMailPage";
@@ -87,7 +88,9 @@ function RequireAuth() {
 
   return (
     <AppShell>
-      <Outlet />
+      <PageTransition>
+        <Outlet />
+      </PageTransition>
     </AppShell>
   );
 }

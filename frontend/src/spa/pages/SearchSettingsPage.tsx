@@ -1,11 +1,8 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
-import {
-  RiAddLine,
-  RiBrainAi3Line,
-  RiGlobalLine,
-} from "@remixicon/react";
+
+import { BrainCircuit, Globe, Plus } from "lucide-react";
 import { api } from "@/api";
 import { useI18n } from "@/i18n";
 import { SettingsTabs } from "@/components/layout/settings-tabs";
@@ -14,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshButton } from "@/components/ui/refresh-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -345,14 +343,14 @@ export default function SearchSettingsPage() {
     <div className="space-y-4 p-4 md:p-6">
       <SettingsTabs
         tabs={[
-          { href: "/ai-settings", label: t("nav.aiSettings"), icon: RiBrainAi3Line },
-          { href: "/search-settings", label: t("nav.searchSettings"), icon: RiGlobalLine },
+          { href: "/ai-settings", label: t("nav.aiSettings"), icon: BrainCircuit },
+          { href: "/search-settings", label: t("nav.searchSettings"), icon: Globe },
         ]}
       />
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl font-semibold">
-            <RiGlobalLine className="h-5 w-5" />
+            <Globe className="h-5 w-5" />
             {t("nav.searchSettings")}
           </h1>
           <p className="text-sm text-slate-500">{t("searchSettings.subtitle")}</p>
@@ -360,7 +358,7 @@ export default function SearchSettingsPage() {
         <div className="flex gap-2">
           <RefreshButton onClick={load} loading={loading || saving} />
           <Button onClick={openCreate}>
-            <RiAddLine className="h-4 w-4" />
+            <Plus className="h-4 w-4" />
             {t("searchSettings.addProfile")}
           </Button>
         </div>
@@ -509,9 +507,8 @@ export default function SearchSettingsPage() {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="search-provider">{t("searchSettings.provider")}</Label>
-              <select
+              <NativeSelect
                 id="search-provider"
-                className="flex h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm"
                 value={form.provider}
                 onChange={(e) => onProviderChange(e.target.value)}
                 disabled={saving}
@@ -521,7 +518,7 @@ export default function SearchSettingsPage() {
                     {p.label}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
               <p className="text-xs text-slate-500">
                 {activeProvider?.native
                   ? t("searchSettings.nativeHint")

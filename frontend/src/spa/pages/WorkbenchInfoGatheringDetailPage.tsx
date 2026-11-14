@@ -2,13 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import {
-  RiArrowLeftLine,
-  RiCheckLine,
-  RiCircleLine,
-  RiCloseLine,
-  RiLoader4Line,
-} from "@remixicon/react";
+
+import { ArrowLeft, Check, Circle, LoaderCircle, X } from "lucide-react";
 import { api } from "@/api";
 import { useI18n } from "@/i18n";
 import { Badge } from "@/components/ui/badge";
@@ -278,7 +273,7 @@ export default function WorkbenchInfoGatheringDetailPage() {
           to="/workbench/info-gathering"
           className="mb-1 inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-800"
         >
-          <RiArrowLeftLine className="h-3.5 w-3.5" />
+          <ArrowLeft className="h-3.5 w-3.5" />
           {t("workbench.infoGatherBack")}
         </Link>
         <div className="flex flex-wrap items-center gap-2">
@@ -381,13 +376,13 @@ export default function WorkbenchInfoGatheringDetailPage() {
                   <li key={stage} className="flex items-start gap-2 text-sm">
                     <span className="mt-0.5 shrink-0">
                       {status === "done" ? (
-                        <RiCheckLine className="h-4 w-4 text-emerald-600" />
+                        <Check className="h-4 w-4 text-emerald-600" />
                       ) : status === "active" ? (
-                        <RiLoader4Line className="h-4 w-4 animate-spin text-cyan-600" />
+                        <LoaderCircle className="h-4 w-4 animate-spin text-foreground" />
                       ) : status === "failed" ? (
-                        <RiCloseLine className="h-4 w-4 text-red-600" />
+                        <X className="h-4 w-4 text-red-600" />
                       ) : (
-                        <RiCircleLine className="h-4 w-4 text-slate-300" />
+                        <Circle className="h-4 w-4 text-slate-300" />
                       )}
                     </span>
                     <span
@@ -477,7 +472,7 @@ export default function WorkbenchInfoGatheringDetailPage() {
                   <td className="px-4 py-2">
                     {f.source_url ? (
                       <a
-                        className="break-all text-blue-600 hover:underline"
+                        className="break-all text-foreground underline decoration-muted-foreground underline-offset-2 hover:decoration-foreground"
                         href={f.source_url}
                         target="_blank"
                         rel="noreferrer"

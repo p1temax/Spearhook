@@ -2,7 +2,7 @@ import { getLocale, resolveLocale } from "../i18n/locales";
 
 /** Root chrome for ChatPage — fills AppShell main; no page bleed / no outer scroll. */
 export const CHAT_ROOT_CLASS =
-  "flex h-full min-h-0 max-h-full flex-1 overflow-hidden bg-white";
+  "flex h-full min-h-0 max-h-full flex-1 overflow-hidden bg-background";
 
 export type ChatSessionLike = {
   id: number;

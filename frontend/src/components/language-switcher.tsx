@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { RiCheckLine, RiTranslate2 } from "@remixicon/react";
+
+import { Check, Languages } from "lucide-react";
 import { useI18n } from "@/i18n";
 import { LOCALES, getLocale } from "@/i18n/locales";
 import { Button } from "@/components/ui/button";
@@ -35,7 +36,7 @@ export function LanguageSwitcher({
           aria-label={`${t("locale.language")}: ${current.englishName}`}
           title={t("locale.language")}
         >
-          <RiTranslate2 className="h-4 w-4" />
+          <Languages className="h-4 w-4" />
           {!compact ? (
             <span className="hidden text-sm sm:inline">{current.nativeName}</span>
           ) : null}
@@ -72,7 +73,7 @@ export function LanguageSwitcher({
                 ) : null}
               </span>
               {active ? (
-                <RiCheckLine className="h-4 w-4 shrink-0 text-slate-900" />
+                <Check className="h-4 w-4 shrink-0 text-slate-900" />
               ) : null}
             </button>
           );

@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { RiNodeTree, RiRobot2Line } from "@remixicon/react";
+
+import { Bot, Network } from "lucide-react";
 import { api } from "@/api";
 import { useI18n } from "@/i18n";
 import { SettingsTabs } from "@/components/layout/settings-tabs";
@@ -68,8 +69,8 @@ export default function AgentsPage() {
     <div className="space-y-4 p-4 md:p-6">
       <SettingsTabs
         tabs={[
-          { href: "/agents", label: t("nav.agents"), icon: RiNodeTree },
-          { href: "/robots", label: t("nav.robots"), icon: RiRobot2Line },
+          { href: "/agents", label: t("nav.agents"), icon: Network },
+          { href: "/robots", label: t("nav.robots"), icon: Bot },
         ]}
       />
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

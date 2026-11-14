@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "motion/react";
 import { api } from "@/api";
 import { useAuthStore } from "@/auth/auth-store";
 import { useI18n } from "@/i18n";
@@ -12,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BrandLogo } from "@/components/brand-logo";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function LoginPage() {
   const { t } = useI18n();
@@ -49,15 +51,19 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative flex min-h-svh flex-col items-center justify-center bg-muted p-4 sm:p-6 md:p-8 lg:p-10">
-      <LanguageSwitcher
-        compact
-        align="end"
-        className="absolute right-3 top-3 sm:right-4 sm:top-4"
-      />
+    <div className="relative flex min-h-svh flex-col items-center justify-center bg-muted p-4 dark:bg-background sm:p-6 md:p-8 lg:p-10">
+      <div className="absolute right-3 top-3 flex items-center gap-1 sm:right-4 sm:top-4">
+        <ThemeToggle />
+        <LanguageSwitcher compact align="end" />
+      </div>
 
-      <div className="flex w-full max-w-sm flex-col gap-4 md:max-w-[min(90vw,48rem)]">
-        <Card className="overflow-hidden p-0 shadow-md">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+        className="flex w-full max-w-sm flex-col gap-4 md:max-w-[min(90vw,48rem)]"
+      >
+        <Card className="overflow-hidden rounded-xl border border-border p-0 shadow-sm">
           <CardContent className="grid p-0 md:grid-cols-2 md:min-h-[28rem]">
             <form
               className="flex flex-col justify-center p-5 sm:p-6 md:px-7 md:py-7"
@@ -67,7 +73,7 @@ export default function LoginPage() {
                 <div className="flex flex-col items-center gap-4 text-center sm:gap-5">
                   <h1 className="flex items-center gap-2.5 text-xl font-semibold sm:text-2xl">
                     <BrandLogo size={44} colored title={t("app.title")} />
-                    <span className="font-brand tracking-[0.14em] text-slate-900">
+                    <span className="font-brand tracking-[0.14em] text-foreground">
                       {t("app.title")}
                     </span>
                   </h1>
@@ -135,7 +141,7 @@ export default function LoginPage() {
         <p className="px-2 text-center text-xs text-muted-foreground sm:text-sm">
           {t("app.subtitle")}
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 }

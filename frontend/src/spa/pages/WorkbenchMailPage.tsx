@@ -10,12 +10,8 @@ import {
   useState,
 } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import {
-  RiAddLine,
-  RiArrowUpSLine,
-  RiDeleteBinLine,
-  RiSendPlane2Line,
-} from "@remixicon/react";
+
+import { ChevronUp, Plus, Send, Trash2 } from "lucide-react";
 import { api } from "@/api";
 import { useI18n } from "@/i18n";
 import { defaultMailBody } from "./defaultMailBody";
@@ -24,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshButton } from "@/components/ui/refresh-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
@@ -73,8 +70,7 @@ const THUMB_ASPECT_H = 10;
 const THUMB_VIEW_W = 640;
 const THUMB_VIEW_H = 400;
 
-const selectClass =
-  "flex h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm";
+const selectClass = "w-full text-sm";
 
 function escapeHtml(value: string) {
   return value
@@ -147,7 +143,7 @@ function MailThumb({
         className="flex w-full items-center justify-center bg-slate-100 text-slate-400"
         style={frameStyle}
       >
-        <RiSendPlane2Line className="h-8 w-8" />
+        <Send className="h-8 w-8" />
       </div>
     );
   }
@@ -561,7 +557,7 @@ export default function WorkbenchMailPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl font-semibold">
-            <RiSendPlane2Line className="h-5 w-5" />
+            <Send className="h-5 w-5" />
             {view === "library"
               ? t("nav.sendMail")
               : filterTemplate
@@ -618,12 +614,12 @@ export default function WorkbenchMailPage() {
           >
           {formOpen ? (
             <>
-              <RiArrowUpSLine className="h-4 w-4" />
+              <ChevronUp className="h-4 w-4" />
               {t("workbench.collapseForm")}
             </>
           ) : (
             <>
-              <RiAddLine className="h-4 w-4" />
+              <Plus className="h-4 w-4" />
               {t("workbench.templateNew")}
             </>
           )}
@@ -666,7 +662,7 @@ export default function WorkbenchMailPage() {
                   <Label className="md:flex md:h-9 md:items-center md:justify-end md:text-right">
                     {t("workbench.selectTemplate")}
                   </Label>
-                  <select
+                  <NativeSelect
                     className={selectClass}
                     value={templateId}
                     onChange={(e) =>
@@ -679,7 +675,7 @@ export default function WorkbenchMailPage() {
                         {tpl.name}
                       </option>
                     ))}
-                  </select>
+                  </NativeSelect>
 
                   <Label className="md:flex md:h-9 md:items-center md:justify-end md:text-right">
                     {t("workbench.templateName")}
@@ -748,7 +744,7 @@ export default function WorkbenchMailPage() {
                   <Label className="md:flex md:h-9 md:items-center md:justify-end md:text-right">
                     {t("workbench.smtpService")}
                   </Label>
-                  <select
+                  <NativeSelect
                     className={selectClass}
                     value={smtpServiceId}
                     onChange={(e) =>
@@ -761,12 +757,12 @@ export default function WorkbenchMailPage() {
                         {s.name} ({s.from_email})
                       </option>
                     ))}
-                  </select>
+                  </NativeSelect>
 
                   <Label className="md:flex md:h-9 md:items-center md:justify-end md:text-right">
                     {t("workbench.projectOptional")}
                   </Label>
-                  <select
+                  <NativeSelect
                     className={selectClass}
                     value={projectId}
                     onChange={(e) =>
@@ -779,7 +775,7 @@ export default function WorkbenchMailPage() {
                         {p.name}
                       </option>
                     ))}
-                  </select>
+                  </NativeSelect>
 
                   <Label className="md:flex md:h-9 md:items-center md:justify-end md:text-right">
                     {t("workbench.landingUrl")}
@@ -926,7 +922,7 @@ export default function WorkbenchMailPage() {
                         aria-label={t("workbench.templateUse")}
                         title={t("workbench.templateUse")}
                       >
-                        <RiSendPlane2Line className="h-4 w-4" />
+                        <Send className="h-4 w-4" />
                       </Button>
                       <Button
                         type="button"
@@ -938,7 +934,7 @@ export default function WorkbenchMailPage() {
                         aria-label={t("common.delete")}
                         title={t("common.delete")}
                       >
-                        <RiDeleteBinLine className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>

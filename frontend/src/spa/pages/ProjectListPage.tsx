@@ -2,7 +2,8 @@
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { RiAddLine } from "@remixicon/react";
+
+import { Plus } from "lucide-react";
 import { api } from "@/api";
 import { isAdminRole, useAuthStore } from "@/auth/auth-store";
 import { useI18n } from "@/i18n";
@@ -14,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { FileUpload } from "@/components/ui/file-upload";
@@ -545,7 +547,7 @@ export default function ProjectListPage() {
           <p className="text-sm text-slate-500">{t("project.subtitle")}</p>
         </div>
         <Button onClick={openCreate}>
-          <RiAddLine className="h-4 w-4" />
+          <Plus className="h-4 w-4" />
           {t("project.newProject")}
         </Button>
       </div>
@@ -581,7 +583,7 @@ export default function ProjectListPage() {
                     <td className="px-4 py-3 font-medium">{record.name}</td>
                     <td className="px-4 py-3">
                       <a
-                        className="text-blue-600 hover:underline break-all"
+                        className="break-all text-foreground underline decoration-muted-foreground underline-offset-2 hover:decoration-foreground"
                         href={accessUrl(record)}
                         target="_blank"
                         rel="noreferrer"
@@ -743,9 +745,8 @@ export default function ProjectListPage() {
                 {t("project.qrRelay")}
               </Label>
               <div className="space-y-1">
-                <select
+                <NativeSelect
                   id="qr_relay_id"
-                  className="flex h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
                   value={form.qr_relay_id}
                   onChange={(e) =>
                     setForm({ ...form, qr_relay_id: e.target.value })
@@ -758,7 +759,7 @@ export default function ProjectListPage() {
                       {relay.enabled === false ? " (paused)" : ""}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
                 <p className="text-xs text-slate-500">{t("project.qrRelayHint")}</p>
               </div>
 
@@ -801,9 +802,8 @@ export default function ProjectListPage() {
                 {t("project.pageBuilderPage")}
               </Label>
               <div className="space-y-1">
-                <select
+                <NativeSelect
                   id="phishing_page_id"
-                  className="flex h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
                   value={form.phishing_page_id}
                   onChange={(e) => {
                     const phishing_page_id = e.target.value;
@@ -827,7 +827,7 @@ export default function ProjectListPage() {
                       {page.name}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
                 <p className="text-xs text-slate-500">
                   {pageBuilderPages.length === 0 ? (
                     <>

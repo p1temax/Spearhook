@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
-import { RiCloseLine } from "@remixicon/react";
+
+import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n";
 
@@ -48,8 +49,8 @@ const SheetContent = React.forwardRef<
       {...props}
     >
       {children}
-      <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100">
-        <RiCloseLine className="h-4 w-4" />
+      <SheetPrimitive.Close className="absolute right-4 top-4 rounded-md p-1 text-muted-foreground opacity-80 outline-none transition-opacity hover:bg-accent hover:opacity-100 focus-visible:ring-2 focus-visible:ring-ring/50">
+        <X className="h-4 w-4" />
         <span className="sr-only">{t("common.close")}</span>
       </SheetPrimitive.Close>
     </SheetPrimitive.Content>

@@ -2,10 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import {
-  RiArrowLeftLine,
-  RiDownloadLine,
-} from "@remixicon/react";
+
+import { ArrowLeft, Download } from "lucide-react";
 import { api } from "@/api";
 import { getStoredToken } from "@/auth/auth-store";
 import { useI18n } from "@/i18n";
@@ -367,7 +365,7 @@ export default function WorkbenchQrPhishingDetailPage() {
           to="/workbench/qr-phishing"
           className="mb-1 inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-800"
         >
-          <RiArrowLeftLine className="h-3.5 w-3.5" />
+          <ArrowLeft className="h-3.5 w-3.5" />
           {t("workbench.qrBack")}
         </Link>
         <div className="flex flex-wrap items-center gap-2">
@@ -414,7 +412,7 @@ export default function WorkbenchQrPhishingDetailPage() {
           onClick={downloadScript}
           disabled={downloading}
         >
-          <RiDownloadLine className="h-4 w-4" />
+          <Download className="h-4 w-4" />
           {downloading
             ? t("workbench.qrDownloading")
             : t("workbench.qrDownloadScript")}

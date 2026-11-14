@@ -1,11 +1,8 @@
 "use client";
 
 import * as React from "react";
-import {
-  RiCloseLine,
-  RiFileLine,
-  RiUploadLine,
-} from "@remixicon/react";
+
+import { File as FileIcon, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n";
@@ -59,12 +56,12 @@ export function FileUpload({
           disabled={disabled}
           onClick={() => inputRef.current?.click()}
         >
-          <RiUploadLine className="h-4 w-4" />
+          <Upload className="h-4 w-4" />
           {buttonLabel}
         </Button>
         {value ? (
           <div className="inline-flex max-w-full items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs text-slate-700">
-            <RiFileLine className="h-3.5 w-3.5 shrink-0" />
+            <FileIcon className="h-3.5 w-3.5 shrink-0" />
             <span className="truncate">{value.name}</span>
             <span className="shrink-0 text-slate-400">
               ({formatSize(value.size)})
@@ -79,7 +76,7 @@ export function FileUpload({
                 if (inputRef.current) inputRef.current.value = "";
               }}
             >
-              <RiCloseLine className="h-3.5 w-3.5" />
+              <X className="h-3.5 w-3.5" />
             </button>
           </div>
         ) : emptyHint ? (

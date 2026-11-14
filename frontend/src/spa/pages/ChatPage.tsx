@@ -2,20 +2,23 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+
 import {
-  RiAddLine,
-  RiArrowUpLine,
-  RiCheckLine,
-  RiCloseLine,
-  RiDeleteBinLine,
-  RiDownloadLine,
-  RiLoader4Line,
-  RiRefreshLine,
-  RiSearchLine,
-  RiSparklingLine,
-  RiStopCircleLine,
-  RiToolsLine,
-} from "@remixicon/react";
+  ArrowUp,
+  Check,
+  CircleStop,
+  Download,
+  LoaderCircle,
+  Menu,
+  Plus,
+  RefreshCw,
+  Search,
+  Sparkles,
+  Trash2,
+  X,
+} from "lucide-react";
+import { motion } from "motion/react";
+import { Group, Panel, Separator } from "react-resizable-panels";
 import {
   api,
   streamChatEvents,
@@ -27,7 +30,15 @@ import { DEMO_MODE } from "@/demo/config";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MarkdownMessage } from "@/components/markdown-message";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { useUiStore } from "@/stores/ui-store";
 import {
   CHAT_ROOT_CLASS,
   groupSessions,
@@ -140,9 +151,9 @@ function JobCardView({ job, live = false }: { job: JobCard; live?: boolean }) {
       <div className="w-full max-w-[92%] rounded-md border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs text-slate-700">
         <div className="mb-1 flex flex-wrap items-center gap-1.5 font-medium">
           {running ? (
-            <RiLoader4Line className="h-3.5 w-3.5 animate-spin" />
+            <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
           ) : (
-            <RiSearchLine className="h-3.5 w-3.5" />
+            <Search className="h-3.5 w-3.5" />
           )}
           <span>{t("chat.jobTitle", { id: String(job.job_id) })}</span>
           <Badge
@@ -207,8 +218,34 @@ function formatArgs(args: unknown): string {
   }
 }
 
+const MESSAGE_IN = {
+  initial: { opacity: 0, y: 6 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.18, ease: "easeOut" as const },
+};
+
+/** Drag handle between the session rail and the thread. */
+function ChatResizeHandle() {
+  return (
+    <Separator className="group relative z-10 w-px shrink-0 bg-transparent">
+      <span
+        aria-hidden
+        className="absolute inset-y-0 -left-1.5 -right-1.5 cursor-col-resize"
+      />
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border transition-colors group-hover:bg-ring"
+      />
+    </Separator>
+  );
+}
+
 export default function ChatPage() {
   const { t, locale } = useI18n();
+  const chatLayout = useUiStore((s) => s.chatLayout);
+  const setChatLayout = useUiStore((s) => s.setChatLayout);
+  const isMobile = useIsMobile();
+  const [railOpen, setRailOpen] = useState(false);
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [sessionId, setSessionId] = useState<number | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -695,97 +732,148 @@ export default function ChatPage() {
 
   const showEmpty = messages.length === 0 && !busy && !pending;
 
+  const sessionRail = (
+    <aside className="flex h-full min-h-0 flex-col overflow-hidden bg-muted/40">
+      <div className="shrink-0 p-3">
+        <Button
+          className="h-9 w-full justify-start gap-2"
+          onClick={() => void newSession()}
+        >
+          <Plus className="h-4 w-4" />
+          {t("chat.newSession")}
+        </Button>
+      </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 pb-3">
+        {loading && (
+          <div className="flex items-center justify-center gap-2 px-2 py-10 text-xs text-muted-foreground">
+            <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
+          </div>
+        )}
+        {!loading && sessions.length === 0 && (
+          <div className="px-3 py-8 text-center text-xs text-muted-foreground">
+            {t("chat.emptySessions")}
+          </div>
+        )}
+        {sessionGroups.map((group) => (
+          <div key={group.key} className="mb-3">
+            <div className="px-2 pb-1 pt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+              {group.label}
+            </div>
+            <div className="space-y-0.5">
+              {group.items.map((s) => {
+                const active = sessionId === s.id;
+                return (
+                  <div
+                    key={s.id}
+                    className={cn(
+                      "group flex items-center gap-1 rounded-md px-2 py-1.5 text-sm transition-colors",
+                      active
+                        ? "bg-background text-foreground shadow-sm ring-1 ring-border"
+                        : "text-muted-foreground hover:bg-background/70 hover:text-foreground",
+                    )}
+                  >
+                    <button
+                      type="button"
+                      className="min-w-0 flex-1 text-left"
+                      onClick={() => {
+                        setSessionId(s.id);
+                        setRailOpen(false);
+                      }}
+                    >
+                      <div className="truncate font-medium">
+                        {s.title || t("chat.newSession")}
+                      </div>
+                      <div
+                        className={cn(
+                          "mt-0.5 flex items-center gap-1.5 text-[11px]",
+                          active ? "text-muted-foreground" : "text-muted-foreground/70",
+                        )}
+                      >
+                        <span>
+                          {relativeTime(s.updated_at || s.created_at, locale, undefined, {
+                            justNow: t("chat.justNow"),
+                          })}
+                        </span>
+                        {s.pending_confirm ? (
+                          <Badge variant="warning" className="h-4 px-1 text-[9px]">
+                            {t("chat.waitingConfirm")}
+                          </Badge>
+                        ) : null}
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      className="shrink-0 rounded p-1 text-muted-foreground/70 opacity-0 transition-opacity hover:bg-accent hover:text-foreground group-hover:opacity-100"
+                      title={t("chat.deleteSession")}
+                      onClick={() => void deleteSession(s.id)}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+
   return (
     <div className={CHAT_ROOT_CLASS}>
-      {/* Session rail — scrolls independently of the message thread */}
-      <aside className="flex h-full min-h-0 w-[15.5rem] shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-slate-50/80">
-        <div className="shrink-0 p-3">
-          <Button
-            className="h-9 w-full justify-start gap-2"
-            onClick={() => void newSession()}
-          >
-            <RiAddLine className="h-4 w-4" />
-            {t("chat.newSession")}
-          </Button>
-        </div>
+      <Group
+        orientation="horizontal"
+        id="chat-split"
+        defaultLayout={isMobile ? undefined : (chatLayout ?? undefined)}
+        onLayoutChanged={isMobile ? undefined : setChatLayout}
+        className="min-h-0 min-w-0 flex-1"
+      >
+        {isMobile ? (
+          <Sheet open={railOpen} onOpenChange={setRailOpen}>
+            <SheetContent side="left" className="w-[17rem] gap-0 p-0 sm:max-w-[17rem]">
+              <SheetHeader className="border-b border-border px-4 py-3">
+                <SheetTitle className="text-sm">{t("chat.sessions")}</SheetTitle>
+              </SheetHeader>
+              <div className="flex min-h-0 flex-1 flex-col">{sessionRail}</div>
+            </SheetContent>
+          </Sheet>
+        ) : (
+          <>
+            <Panel
+              id="rail"
+              defaultSize="21%"
+              minSize="14%"
+              maxSize="36%"
+              collapsible
+              collapsedSize="0%"
+              className="min-w-0"
+            >
+              {sessionRail}
+            </Panel>
 
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 pb-3">
-          {loading && (
-            <div className="flex items-center justify-center gap-2 px-2 py-10 text-xs text-slate-400">
-              <RiLoader4Line className="h-3.5 w-3.5 animate-spin" />
-            </div>
-          )}
-          {!loading && sessions.length === 0 && (
-            <div className="px-3 py-8 text-center text-xs text-slate-400">
-              {t("chat.emptySessions")}
-            </div>
-          )}
-          {sessionGroups.map((group) => (
-            <div key={group.key} className="mb-3">
-              <div className="px-2 pb-1 pt-1 text-[11px] font-medium uppercase tracking-wide text-slate-400">
-                {group.label}
-              </div>
-              <div className="space-y-0.5">
-                {group.items.map((s) => {
-                  const active = sessionId === s.id;
-                  return (
-                    <div
-                      key={s.id}
-                      className={cn(
-                        "group flex items-center gap-1 rounded-md px-2 py-1.5 text-sm transition-colors",
-                        active
-                          ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200"
-                          : "text-slate-600 hover:bg-white/70",
-                      )}
-                    >
-                      <button
-                        type="button"
-                        className="min-w-0 flex-1 text-left"
-                        onClick={() => setSessionId(s.id)}
-                      >
-                        <div className="truncate font-medium">
-                          {s.title || t("chat.newSession")}
-                        </div>
-                        <div
-                          className={cn(
-                            "mt-0.5 flex items-center gap-1.5 text-[11px]",
-                            active ? "text-slate-500" : "text-slate-400",
-                          )}
-                        >
-                          <span>
-                            {relativeTime(s.updated_at || s.created_at, locale, undefined, {
-                              justNow: t("chat.justNow"),
-                            })}
-                          </span>
-                          {s.pending_confirm ? (
-                            <Badge variant="warning" className="h-4 px-1 text-[9px]">
-                              {t("chat.waitingConfirm")}
-                            </Badge>
-                          ) : null}
-                        </div>
-                      </button>
-                      <button
-                        type="button"
-                        className="shrink-0 rounded p-1 text-slate-400 opacity-0 transition-opacity hover:bg-slate-100 hover:text-slate-700 group-hover:opacity-100"
-                        title={t("chat.deleteSession")}
-                        onClick={() => void deleteSession(s.id)}
-                      >
-                        <RiDeleteBinLine className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      </aside>
+            <ChatResizeHandle />
+          </>
+        )}
 
+        <Panel id="thread" minSize="40%" className="min-w-0">
       {/* Main thread */}
-      <section className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white">
-        <header className="flex h-12 shrink-0 items-center justify-between border-b border-slate-100 px-4">
-          <div className="min-w-0">
-            <h1 className="truncate text-sm font-semibold text-slate-900">
+      <section className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden bg-background">
+        <header className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-border/70 px-4">
+          <div className="flex min-w-0 items-center gap-2">
+            {isMobile ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 shrink-0 text-muted-foreground"
+                onClick={() => setRailOpen(true)}
+                aria-label={t("chat.sessions")}
+              >
+                <Menu className="h-4 w-4" />
+              </Button>
+            ) : null}
+            <h1 className="truncate text-sm font-semibold text-foreground">
               {activeSession?.title || t("chat.noActiveSession")}
             </h1>
           </div>
@@ -805,8 +893,8 @@ export default function ChatPage() {
             <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6">
               {showEmpty ? (
                 <div className="flex flex-col items-center justify-center px-0 py-10 text-center">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-md bg-slate-900 text-white">
-                    <RiSparklingLine className="h-5 w-5" />
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                    <Sparkles className="h-5 w-5" />
                   </div>
                   <h2 className="font-brand text-lg font-semibold tracking-[0.08em] text-slate-900">
                     {t("chat.title")}
@@ -825,7 +913,7 @@ export default function ChatPage() {
                           type="button"
                           disabled={busy || !!pending}
                           onClick={() => void sendMessage(s)}
-                          className="rounded-md border border-slate-200 bg-white px-3.5 py-2.5 text-left text-sm text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50"
+                          className="rounded-md border border-slate-200 bg-background px-3.5 py-2.5 text-left text-sm text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50"
                         >
                           {s}
                         </button>
@@ -846,7 +934,7 @@ export default function ChatPage() {
                               requestAnimationFrame(() => resizeTextarea());
                               textareaRef.current?.focus();
                             }}
-                            className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50"
+                            className="rounded-full border border-slate-200 bg-background px-3 py-1.5 text-xs text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50"
                           >
                             {p.label}
                           </button>
@@ -864,11 +952,15 @@ export default function ChatPage() {
                     }
                     if (m.role === "user") {
                       return (
-                        <div key={m.id} className="flex justify-end">
-                          <div className="max-w-[85%] rounded-md bg-slate-900 px-3.5 py-2.5 text-sm leading-relaxed text-white whitespace-pre-wrap">
+                        <motion.div
+                          key={m.id}
+                          {...MESSAGE_IN}
+                          className="flex justify-end"
+                        >
+                          <div className="max-w-[85%] whitespace-pre-wrap rounded-lg bg-primary px-3.5 py-2.5 text-sm leading-relaxed text-primary-foreground">
                             {m.content}
                           </div>
-                        </div>
+                        </motion.div>
                       );
                     }
                     if (m.role === "tool") {
@@ -879,22 +971,28 @@ export default function ChatPage() {
                         ? payload.error || payload.summary || ""
                         : m.content;
                       return (
-                        <div key={m.id} className="flex justify-start">
+                        <motion.div
+                          key={m.id}
+                          {...MESSAGE_IN}
+                          className="flex justify-start"
+                        >
                           <div
                             className={cn(
                               "w-full min-w-0 max-w-[92%] rounded-md border px-3 py-2.5 text-xs",
                               failed
-                                ? "border-red-200 bg-red-50/80 text-red-800"
+                                ? "border-destructive/30 bg-destructive/5 text-destructive"
                                 : running
-                                  ? "border-slate-200 bg-slate-50 text-slate-700"
-                                  : "border-emerald-200 bg-emerald-50/60 text-slate-700",
+                                  ? "border-border bg-muted text-foreground"
+                                  : "border-border bg-muted/40 text-foreground",
                             )}
                           >
                             <div className="mb-1 flex items-center gap-1.5 font-medium">
                               {running ? (
-                                <RiLoader4Line className="h-3.5 w-3.5 animate-spin" />
+                                <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
+                              ) : failed ? (
+                                <X className="h-3.5 w-3.5" />
                               ) : (
-                                <RiToolsLine className="h-3.5 w-3.5" />
+                                <Check className="h-3.5 w-3.5" />
                               )}
                               <span>
                                 {running
@@ -924,7 +1022,7 @@ export default function ChatPage() {
                                 <summary className="cursor-pointer select-none text-[11px] text-slate-500">
                                   {t("chat.toolDetails")}
                                 </summary>
-                                <pre className="mt-1 max-h-60 overflow-auto whitespace-pre-wrap break-all rounded-md border border-slate-200 bg-white/70 p-2 font-mono text-[11px] leading-relaxed">
+                                <pre className="mt-1 max-h-60 overflow-auto whitespace-pre-wrap break-all rounded-md border border-slate-200 bg-background/70 p-2 font-mono text-[11px] leading-relaxed">
                                   {JSON.stringify(payload.result, null, 2)}
                                 </pre>
                               </details>
@@ -988,7 +1086,7 @@ export default function ChatPage() {
                                         }
                                         className="inline-flex items-center gap-1 text-slate-900 underline underline-offset-2"
                                       >
-                                        <RiDownloadLine className="h-3 w-3" />
+                                        <Download className="h-3 w-3" />
                                         {t("chat.downloadCsv")}
                                       </button>
                                     );
@@ -1011,7 +1109,7 @@ export default function ChatPage() {
                                   disabled={busy || !!pending}
                                   onClick={() => void retryTool(m.tool_call_id!)}
                                 >
-                                  <RiRefreshLine className="mr-1 h-3 w-3" />
+                                  <RefreshCw className="mr-1 h-3 w-3" />
                                   {t("chat.retry")}
                                 </Button>
                                 <span className="text-[11px] text-slate-500">
@@ -1020,21 +1118,25 @@ export default function ChatPage() {
                               </div>
                             ) : null}
                           </div>
-                        </div>
+                        </motion.div>
                       );
                     }
                     if (m.role === "assistant") {
                       return (
-                        <div key={m.id} className="flex gap-3">
+                        <motion.div
+                          key={m.id}
+                          {...MESSAGE_IN}
+                          className="flex gap-3"
+                        >
                           <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-700">
-                            <RiSparklingLine className="h-3.5 w-3.5" />
+                            <Sparkles className="h-3.5 w-3.5" />
                           </div>
                           <div className="min-w-0 flex-1 pt-0.5">
                             <div className="mb-1 text-[11px] font-medium uppercase tracking-wide text-slate-400">
                               {t("chat.assistantLabel")}
                               {m.streaming ? (
                                 <span className="ml-2 inline-flex items-center gap-1 normal-case tracking-normal text-slate-400">
-                                  <RiLoader4Line className="h-3 w-3 animate-spin" />
+                                  <LoaderCircle className="h-3 w-3 animate-spin" />
                                   {t("chat.sending")}
                                 </span>
                               ) : null}
@@ -1047,7 +1149,7 @@ export default function ChatPage() {
                               </div>
                             ) : null}
                           </div>
-                        </div>
+                        </motion.div>
                       );
                     }
                     return null;
@@ -1060,14 +1162,14 @@ export default function ChatPage() {
                   {busy && thinkingPhase ? (
                     <div className="flex gap-3">
                       <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-700">
-                        <RiSparklingLine className="h-3.5 w-3.5" />
+                        <Sparkles className="h-3.5 w-3.5" />
                       </div>
                       <div className="min-w-0 flex-1 pt-0.5">
                         <div className="mb-1 text-[11px] font-medium uppercase tracking-wide text-slate-400">
                           {t("chat.assistantLabel")}
                         </div>
                         <div className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
-                          <RiLoader4Line className="h-3.5 w-3.5 shrink-0 animate-spin text-slate-500" />
+                          <LoaderCircle className="h-3.5 w-3.5 shrink-0 animate-spin text-slate-500" />
                           <span className="leading-relaxed">
                             {thinkingLabel(thinkingPhase)}
                           </span>
@@ -1082,7 +1184,7 @@ export default function ChatPage() {
                   ) : null}
 
                   {pending ? (
-                    <div className="rounded-md border border-slate-200 bg-white p-4 shadow-sm">
+                    <div className="rounded-md border border-slate-200 bg-card p-4 shadow-sm">
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <div className="flex items-center gap-2">
@@ -1124,7 +1226,7 @@ export default function ChatPage() {
                           disabled={busy}
                           onClick={() => void confirmPending(true)}
                         >
-                          <RiCheckLine className="mr-1 h-3.5 w-3.5" />
+                          <Check className="mr-1 h-3.5 w-3.5" />
                           {t("chat.confirm")}
                         </Button>
                         <Button
@@ -1133,7 +1235,7 @@ export default function ChatPage() {
                           disabled={busy}
                           onClick={() => void confirmPending(false)}
                         >
-                          <RiCloseLine className="mr-1 h-3.5 w-3.5" />
+                          <X className="mr-1 h-3.5 w-3.5" />
                           {t("chat.reject")}
                         </Button>
                       </div>
@@ -1150,7 +1252,7 @@ export default function ChatPage() {
           <div className="relative shrink-0 [scrollbar-gutter:stable]">
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-full h-6 bg-gradient-to-t from-white to-transparent"
+              className="pointer-events-none absolute inset-x-0 bottom-full h-6 bg-gradient-to-t from-background to-transparent"
             />
             <div className="mx-auto w-full max-w-3xl px-4 pb-3 pt-1 sm:px-6">
               {error ? (
@@ -1158,11 +1260,11 @@ export default function ChatPage() {
                   {error}
                 </div>
               ) : null}
-              <div className="flex items-end gap-2 rounded-lg border border-slate-200/90 bg-white px-2 py-1.5 shadow-[0_8px_30px_rgb(15,23,42,0.08)] ring-1 ring-slate-900/5 focus-within:border-slate-300 focus-within:shadow-[0_10px_36px_rgb(15,23,42,0.12)]">
+              <div className="flex items-end gap-2 rounded-lg border border-slate-200/90 bg-background px-2 py-1.5 shadow-[0_8px_30px_rgb(15,23,42,0.08)] ring-1 ring-slate-900/5 focus-within:border-slate-300 focus-within:shadow-[0_10px_36px_rgb(15,23,42,0.12)]">
                 <textarea
                   ref={textareaRef}
                   className="max-h-32 min-h-[32px] flex-1 resize-none bg-transparent px-1.5 py-1.5 text-sm leading-5 outline-none placeholder:text-slate-400 disabled:opacity-60"
-                  placeholder={t("chat.placeholder")}
+                  placeholder={isMobile ? t("chat.placeholderShort") : t("chat.placeholder")}
                   value={input}
                   disabled={!!pending}
                   rows={1}
@@ -1185,7 +1287,7 @@ export default function ChatPage() {
                     onClick={stopGenerating}
                     title={t("chat.stop")}
                   >
-                    <RiStopCircleLine className="h-4 w-4" />
+                    <CircleStop className="h-4 w-4" />
                   </Button>
                 ) : (
                   <Button
@@ -1195,17 +1297,19 @@ export default function ChatPage() {
                     onClick={() => void sendMessage()}
                     title={t("chat.send")}
                   >
-                    <RiArrowUpLine className="h-4 w-4" />
+                    <ArrowUp className="h-4 w-4" />
                   </Button>
                 )}
               </div>
-              <div className="mt-2 text-center text-[11px] text-slate-400">
+              <div className="mt-2 hidden text-center text-[11px] text-muted-foreground sm:block">
                 {t("chat.composerHint")}
               </div>
             </div>
           </div>
         </div>
       </section>
+        </Panel>
+      </Group>
     </div>
   );
 }

@@ -9,17 +9,38 @@ import {
   useRef,
   useState,
 } from "react";
+
 import {
-  RiCheckLine,
-  RiCircleLine,
-  RiCloseLine,
-  RiDeleteBinLine,
-  RiDownloadLine,
-  RiFileCodeLine,
-  RiLayout4Line,
-  RiLoader4Line,
-  RiUploadLine,
-} from "@remixicon/react";
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  rectSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
+  Check,
+  Circle,
+  Download,
+  FileCode2,
+  GripVertical,
+  LayoutTemplate,
+  LoaderCircle,
+  Trash2,
+  Upload,
+  X,
+} from "lucide-react";
+import { usePageOrderStore } from "@/stores/page-order-store";
+import { cn } from "@/lib/utils";
 import { api } from "@/api";
 import { getStoredToken } from "@/auth/auth-store";
 import { useI18n } from "@/i18n";
@@ -267,7 +288,7 @@ function PageThumb({
         className="flex w-full items-center justify-center bg-slate-100 text-slate-400"
         style={frameStyle}
       >
-        <RiFileCodeLine className="h-8 w-8" />
+        <FileCode2 className="h-8 w-8" />
       </div>
     );
   }
@@ -305,6 +326,104 @@ function PageThumb({
         }}
         tabIndex={-1}
       />
+    </div>
+  );
+}
+
+function SortablePageCard({
+  page,
+  updatedLabel,
+  downloading,
+  onDownload,
+  onDelete,
+}: {
+  page: PageSummary;
+  updatedLabel: string;
+  downloading: boolean;
+  onDownload: () => void;
+  onDelete: () => void;
+}) {
+  const { t } = useI18n();
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: page.id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+      }}
+      className={cn(
+        "min-w-0 touch-manipulation",
+        isDragging && "relative z-10",
+      )}
+    >
+      <Card
+        className={cn(
+          "overflow-hidden transition-shadow",
+          isDragging
+            ? "shadow-xl ring-2 ring-ring/40"
+            : "hover:shadow-md",
+        )}
+      >
+        <div className="relative border-b border-border bg-muted/30">
+          <PageThumb
+            pageId={page.id}
+            title={page.name}
+            revision={page.updated_at || page.created_at}
+          />
+        </div>
+        <CardContent className="space-y-1 p-3">
+          <div className="flex items-start justify-between gap-2">
+            <button
+              type="button"
+              {...attributes}
+              {...listeners}
+              aria-label={t("common.dragToReorder")}
+              title={t("common.dragToReorder")}
+              className="mt-0.5 shrink-0 cursor-grab rounded-sm p-0.5 text-muted-foreground/70 transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 active:cursor-grabbing"
+            >
+              <GripVertical className="h-3.5 w-3.5" />
+            </button>
+            <h2 className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">
+              {page.name || t("pageBuilder.untitled")}
+            </h2>
+            <div className="flex shrink-0 gap-1">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={onDownload}
+                disabled={downloading}
+                aria-label={t("pageBuilder.downloadHtml")}
+                title={t("pageBuilder.downloadHtml")}
+              >
+                <Download className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={onDelete}
+                aria-label={t("pageBuilder.deleteHtml")}
+                title={t("pageBuilder.deleteHtml")}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground/80">{updatedLabel}</p>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -470,6 +589,35 @@ export default function WorkbenchPageBuilderPage() {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return "-";
     return date.toLocaleString(dateLocale);
+  };
+
+  const savedOrder = usePageOrderStore((s) => s.order);
+  const setOrder = usePageOrderStore((s) => s.setOrder);
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const orderedPages = useMemo(() => {
+    const position = new Map(savedOrder.map((id, index) => [id, index]));
+    return [...pages].sort((a, b) => {
+      const ai = position.get(a.id);
+      const bi = position.get(b.id);
+      if (ai == null && bi == null) return 0;
+      if (ai == null) return 1;
+      if (bi == null) return -1;
+      return ai - bi;
+    });
+  }, [pages, savedOrder]);
+
+  const onDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const ids = orderedPages.map((page) => page.id);
+    const from = ids.indexOf(Number(active.id));
+    const to = ids.indexOf(Number(over.id));
+    if (from < 0 || to < 0) return;
+    setOrder(arrayMove(ids, from, to));
   };
 
   const onDeletePage = async () => {
@@ -864,7 +1012,7 @@ export default function WorkbenchPageBuilderPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl font-semibold">
-            <RiLayout4Line className="h-5 w-5" />
+            <LayoutTemplate className="h-5 w-5" />
             {t("nav.pageBuilder")}
           </h1>
           <p className="text-sm text-slate-500">{t("pageBuilder.subtitle")}</p>
@@ -872,7 +1020,7 @@ export default function WorkbenchPageBuilderPage() {
         <div className="flex flex-wrap gap-2">
           <RefreshButton onClick={fetchPages} loading={loading} />
           <Button variant="outline" onClick={openUpload}>
-            <RiUploadLine className="h-4 w-4" />
+            <Upload className="h-4 w-4" />
             {t("pageBuilder.uploadHtml")}
           </Button>
           <Button onClick={openMirror}>
@@ -905,59 +1053,31 @@ export default function WorkbenchPageBuilderPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {pages.map((page) => (
-            <Card
-              key={page.id}
-              className="overflow-hidden transition-shadow hover:shadow-md"
-            >
-              <div className="relative border-b bg-white">
-                <PageThumb
-                  pageId={page.id}
-                  title={page.name}
-                  revision={page.updated_at || page.created_at}
-                />
-              </div>
-              <CardContent className="space-y-1 p-3">
-                <div className="flex items-start justify-between gap-2">
-                  <h2 className="min-w-0 flex-1 truncate text-sm font-semibold text-slate-900">
-                    {page.name || t("pageBuilder.untitled")}
-                  </h2>
-                  <div className="flex shrink-0 gap-1">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => onDownloadHtml(page)}
-                      disabled={downloadingId === page.id}
-                      aria-label={t("pageBuilder.downloadHtml")}
-                      title={t("pageBuilder.downloadHtml")}
-                    >
-                      <RiDownloadLine className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
-                      onClick={() => setDeleteTarget(page)}
-                      aria-label={t("pageBuilder.deleteHtml")}
-                      title={t("pageBuilder.deleteHtml")}
-                    >
-                      <RiDeleteBinLine className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                <p className="text-xs text-slate-400">
-                  {t("pageBuilder.updatedAt", {
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={onDragEnd}
+        >
+          <SortableContext
+            items={orderedPages.map((page) => page.id)}
+            strategy={rectSortingStrategy}
+          >
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {orderedPages.map((page) => (
+                <SortablePageCard
+                  key={page.id}
+                  page={page}
+                  updatedLabel={t("pageBuilder.updatedAt", {
                     time: formatDate(page.updated_at || page.created_at),
                   })}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  downloading={downloadingId === page.id}
+                  onDownload={() => onDownloadHtml(page)}
+                  onDelete={() => setDeleteTarget(page)}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       )}
 
       <AlertDialog
@@ -1143,13 +1263,13 @@ export default function WorkbenchPageBuilderPage() {
                       >
                         <span className="mt-0.5 shrink-0">
                           {status === "done" ? (
-                            <RiCheckLine className="h-4 w-4 text-emerald-600" />
+                            <Check className="h-4 w-4 text-emerald-600" />
                           ) : status === "active" ? (
-                            <RiLoader4Line className="h-4 w-4 animate-spin text-cyan-600" />
+                            <LoaderCircle className="h-4 w-4 animate-spin text-foreground" />
                           ) : status === "failed" ? (
-                            <RiCloseLine className="h-4 w-4 text-red-600" />
+                            <X className="h-4 w-4 text-red-600" />
                           ) : (
-                            <RiCircleLine className="h-4 w-4 text-slate-300" />
+                            <Circle className="h-4 w-4 text-slate-300" />
                           )}
                         </span>
                         <span
@@ -1317,13 +1437,13 @@ export default function WorkbenchPageBuilderPage() {
                       >
                         <span className="mt-0.5 shrink-0">
                           {status === "done" ? (
-                            <RiCheckLine className="h-4 w-4 text-emerald-600" />
+                            <Check className="h-4 w-4 text-emerald-600" />
                           ) : status === "active" ? (
-                            <RiLoader4Line className="h-4 w-4 animate-spin text-cyan-600" />
+                            <LoaderCircle className="h-4 w-4 animate-spin text-foreground" />
                           ) : status === "failed" ? (
-                            <RiCloseLine className="h-4 w-4 text-red-600" />
+                            <X className="h-4 w-4 text-red-600" />
                           ) : (
-                            <RiCircleLine className="h-4 w-4 text-slate-300" />
+                            <Circle className="h-4 w-4 text-slate-300" />
                           )}
                         </span>
                         <span

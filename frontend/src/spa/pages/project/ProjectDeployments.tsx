@@ -267,11 +267,11 @@ export default function ProjectDeployments() {
               ? "border-red-200 bg-red-50 text-red-700"
               : buildState.status === "success"
                 ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                : "border-blue-200 bg-blue-50 text-blue-800"
+                : "border-border bg-muted text-foreground"
           }`}
         >
           <div className="font-medium">{buildState.text}</div>
-          <div className="mt-2 h-2 overflow-hidden rounded-sm bg-white/60">
+          <div className="mt-2 h-2 overflow-hidden rounded-sm bg-background/60">
             <div
               className="h-full rounded-sm bg-current transition-all"
               style={{ width: `${buildState.percent || 0}%` }}
@@ -373,7 +373,7 @@ export default function ProjectDeployments() {
                     <td className="px-4 py-3 break-all">
                       {record.runtime_url ? (
                         <a
-                          className="text-blue-600 hover:underline"
+                          className="text-foreground underline decoration-muted-foreground underline-offset-2 hover:decoration-foreground"
                           href={record.runtime_url}
                           target="_blank"
                           rel="noreferrer"

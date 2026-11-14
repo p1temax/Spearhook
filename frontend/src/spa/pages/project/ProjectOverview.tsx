@@ -100,7 +100,7 @@ export default function ProjectOverview() {
               <dd className="text-right break-all">
                 {project.container_status === "running" ? (
                   <a
-                    className="text-blue-600 hover:underline"
+                    className="text-foreground underline decoration-muted-foreground underline-offset-2 hover:decoration-foreground"
                     href={accessUrl}
                     target="_blank"
                     rel="noreferrer"
@@ -130,7 +130,7 @@ export default function ProjectOverview() {
             {t("project.runningDeploymentRatio")}
           </p>
           <Link
-            className="mt-3 inline-block text-sm text-blue-600 hover:underline"
+            className="mt-3 inline-block text-sm text-foreground underline decoration-muted-foreground underline-offset-2 hover:decoration-foreground"
             to={`/projects/${id}/deployments`}
           >
             {t("project.viewDeployments")} →
@@ -148,7 +148,7 @@ export default function ProjectOverview() {
             {t("project.totalRecords")}
           </p>
           <Link
-            className="mt-3 inline-block text-sm text-blue-600 hover:underline"
+            className="mt-3 inline-block text-sm text-foreground underline decoration-muted-foreground underline-offset-2 hover:decoration-foreground"
             to={`/projects/${id}/records`}
           >
             {t("project.viewRecords")} →

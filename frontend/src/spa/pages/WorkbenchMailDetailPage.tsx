@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { RiArrowLeftLine } from "@remixicon/react";
+
+import { ArrowLeft } from "lucide-react";
 import { api } from "@/api";
 import { useI18n } from "@/i18n";
 import { Badge } from "@/components/ui/badge";
@@ -142,7 +143,7 @@ export default function WorkbenchMailDetailPage() {
           to="/workbench/mail"
           className="mb-1 inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-800"
         >
-          <RiArrowLeftLine className="h-3.5 w-3.5" />
+          <ArrowLeft className="h-3.5 w-3.5" />
           {t("workbench.campaigns")}
         </Link>
         <div className="flex flex-wrap items-center gap-2">

@@ -15,10 +15,8 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import {
-  RiArrowLeftLine,
-  RiExternalLinkLine,
-} from "@remixicon/react";
+
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import { api } from "@/api";
 import { useI18n } from "@/i18n";
 import {
@@ -162,7 +160,7 @@ export default function ProjectDetailLayout() {
           className="inline-flex items-center gap-1 text-sm text-slate-600 hover:text-slate-900"
           onClick={() => navigate("/projects")}
         >
-          <RiArrowLeftLine className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4" />
           {t("project.detailBack")}
         </button>
 
@@ -202,7 +200,7 @@ export default function ProjectDetailLayout() {
             {runtimeStatus === "running" ? (
               <Button variant="outline" size="sm" asChild>
                 <a href={accessUrl} target="_blank" rel="noreferrer">
-                  <RiExternalLinkLine className="h-4 w-4" />
+                  <ExternalLink className="h-4 w-4" />
                   {t("project.openPage")}
                 </a>
               </Button>

@@ -1,16 +1,13 @@
 "use client";
 
 import * as React from "react";
-import {
-  RiCheckLine,
-  RiCloseLine,
-  RiExpandUpDownLine,
-} from "@remixicon/react";
+
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Check, ChevronsUpDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type MultiSelectOption = {
@@ -63,7 +60,7 @@ export function MultiSelect({
           type="button"
           disabled={disabled}
           className={cn(
-            "inline-flex h-auto min-h-9 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-normal shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-50",
+            "inline-flex h-auto min-h-9 w-full items-center justify-between rounded-md border border-slate-200 bg-background px-3 py-1.5 text-sm font-normal shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-50",
             className,
           )}
         >
@@ -94,7 +91,7 @@ export function MultiSelect({
                       }
                     }}
                   >
-                    <RiCloseLine className="h-3 w-3" />
+                    <X className="h-3 w-3" />
                   </span>
                 </span>
               ))
@@ -111,10 +108,10 @@ export function MultiSelect({
                   if (e.key === "Enter" || e.key === " ") clear(e as unknown as React.MouseEvent);
                 }}
               >
-                <RiCloseLine className="h-3.5 w-3.5" />
+                <X className="h-3.5 w-3.5" />
               </span>
             ) : null}
-            <RiExpandUpDownLine className="h-4 w-4 text-slate-400" />
+            <ChevronsUpDown className="h-4 w-4 text-slate-400" />
           </div>
         </button>
       </PopoverTrigger>
@@ -139,11 +136,11 @@ export function MultiSelect({
                   className={cn(
                     "flex h-4 w-4 items-center justify-center rounded border",
                     checked
-                      ? "border-slate-900 bg-slate-900 text-white"
+                      ? "border-primary bg-primary text-primary-foreground"
                       : "border-slate-300",
                   )}
                 >
-                  {checked ? <RiCheckLine className="h-3 w-3" /> : null}
+                  {checked ? <Check className="h-3 w-3" /> : null}
                 </span>
                 <span className="truncate">{opt.label}</span>
               </button>
