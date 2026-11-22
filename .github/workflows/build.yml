@@ -190,7 +190,8 @@ jobs:
         run: |
           set -euo pipefail
           cd release
-          mkdir -p archives
+          rm -rf archives staging
+          mkdir -p archives staging
 
           # One archive per OS/arch with both binaries + example configs
           pairs=(
@@ -204,16 +205,18 @@ jobs:
 
           for pair in "${pairs[@]}"; do
             IFS=':' read -r name platform agent <<<"${pair}"
-            staging="spearhook-${name}"
+            # Stage under a subdirectory so the top-level folder in the archive
+            # is spearhook-<name> without colliding with the binary of the same name.
+            staging="staging/spearhook-${name}"
             mkdir -p "${staging}"
             cp "${platform}" "${agent}" config.yaml.example agent.yaml.example "${staging}/"
             if [[ "${name}" == windows-* ]]; then
-              zip -r "archives/${staging}.zip" "${staging}"
+              (cd staging && zip -qr "../archives/spearhook-${name}.zip" "spearhook-${name}")
             else
-              tar -czf "archives/${staging}.tar.gz" "${staging}"
+              tar -czf "archives/spearhook-${name}.tar.gz" -C staging "spearhook-${name}"
             fi
-            rm -rf "${staging}"
           done
+          rm -rf staging
 
           ls -lh archives/
 
