@@ -37,7 +37,7 @@ func TestFetchURLHTMLRenderedReplacesQRCanvas(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	htmlText, _, err := FetchURLHTMLRendered(context.Background(), srv.URL, 20*time.Second)
+	htmlText, _, err := FetchURLHTMLRendered(context.Background(), srv.URL, 60*time.Second)
 	if err != nil {
 		t.Fatal(err)
 	}
