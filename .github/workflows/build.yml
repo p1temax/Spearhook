@@ -7,13 +7,19 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Release tag to create (e.g. v0.2.0). Empty = auto-bump the latest v* tag."
+        required: false
+        type: string
 
 permissions:
   contents: read
 
+# PR runs cancel each other; main runs must finish so each commit gets its release.
 concurrency:
   group: build-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   GO_VERSION: "1.24.12"
@@ -21,10 +27,10 @@ env:
 
 jobs:
   # ---------------------------------------------------------------------------
-  # Push / PR: compile check (frontend export + Go tests + host binary)
+  # Pull request: compile check only (frontend export + Go tests + host binary)
   # ---------------------------------------------------------------------------
   verify:
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -66,16 +72,57 @@ jobs:
           ls -lh spearhook-linux-amd64 spearhook-agent-linux-amd64
 
   # ---------------------------------------------------------------------------
-  # Tag (v*) / manual: cross-compile all targets + upload artifacts / Release
+  # Push to main / tag push / manual dispatch: build every target and publish
+  # a GitHub Release automatically.
+  #   - tag push          -> release uses that tag
+  #   - workflow_dispatch -> release uses inputs.version, else auto-bump
+  #   - push to main      -> auto-bump the latest v* tag (v0.1.0 if none)
   # ---------------------------------------------------------------------------
   release:
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    # Serialize publishing so two main pushes cannot compute the same next tag.
+    concurrency:
+      group: release-publish
+      cancel-in-progress: false
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve release tag
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if [[ "$REF_TYPE" == "tag" ]]; then
+            tag="$REF_NAME"
+          elif [[ -n "${INPUT_VERSION:-}" ]]; then
+            tag="$INPUT_VERSION"
+          else
+            git fetch --tags --force --quiet
+            latest="$(git tag -l 'v*' --sort=-v:refname | head -n1)"
+            if [[ -z "$latest" ]]; then
+              tag="v0.1.0"
+            else
+              core="${latest#v}"
+              core="${core%%-*}"
+              IFS=. read -r major minor patch <<<"$core"
+              if ! [[ "${major:-}" =~ ^[0-9]+$ && "${minor:-}" =~ ^[0-9]+$ && "${patch:-}" =~ ^[0-9]+$ ]]; then
+                echo "::error::Cannot auto-bump tag '$latest'. Run the workflow manually with an explicit version."
+                exit 1
+              fi
+              tag="v${major}.${minor}.$((patch + 1))"
+            fi
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "Resolved release tag: $tag"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -184,13 +231,14 @@ jobs:
           retention-days: 30
 
       - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: Spearhook ${{ steps.version.outputs.tag }}
           generate_release_notes: true
+          fail_on_unmatched_files: true
           files: |
             release/archives/*
             release/config.yaml.example
             release/agent.yaml.example
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
