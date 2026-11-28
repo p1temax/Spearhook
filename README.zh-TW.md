@@ -2,255 +2,466 @@
   <a href="README.md">English</a> · <a href="README.zh.md">简体中文</a> · <b>繁體中文</b> · <a href="README.ja.md">日本語</a> · <a href="README.ko.md">한국어</a>
 </p>
 
-<p align="center">
+<div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/readme/logo-dark.svg" />
-    <img src="assets/readme/logo.svg" alt="Spearhook" width="96" height="96" title="Spearhook" />
+    <source media="(prefers-color-scheme: light)" srcset="assets/readme/logo.svg" />
+    <img src="assets/readme/logo.svg" alt="Spearhook Logo" width="88" height="88" />
   </picture>
-</p>
 
-<h1 align="center">Spearhook</h1>
+  <h1>Spearhook</h1>
 
-<p align="center">
-  <strong>專為授權紅隊設計的自架釣魚演練控制台</strong>
-</p>
+  <p>
+    <img height="18" alt="Go 1.24" src="https://img.shields.io/badge/Go-1.24-00ADD8?style=flat&logo=go&logoColor=white" />
+    <img height="18" alt="PostgreSQL 16" src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat&logo=postgresql&logoColor=white" />
+    <img height="18" alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000000?style=flat&logo=nextdotjs&logoColor=white" />
+    <img height="18" alt="React 19" src="https://img.shields.io/badge/React-19-20232A?style=flat&logo=react&logoColor=61DAFB" />
+    <img height="18" alt="TypeScript 5" src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat&logo=typescript&logoColor=white" />
+    <img height="18" alt="Docker" src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white" />
+    <img height="18" alt="MIT License" src="https://img.shields.io/badge/License-MIT-22C55E?style=flat" />
+  </p>
 
-<p align="center">
-  Go + Gin · Next.js · SQLite · 單一執行檔 · 可選遠端 Agent
-</p>
+  <p>面向授權安全演練與資安意識評估的一體化自託管控制平台：基於 Go 單一二進位控制面、內嵌 Next.js 控制台、分散式輕量 Agent 節點以及 AI 對話式編排引擎建構。</p>
 
-<p align="center">
-  <a href="https://spearhook.pages.dev/">線上示範</a> ·
-  <a href="#法律聲明">法律聲明</a> ·
-  <a href="#專案簡介">專案簡介</a> ·
-  <a href="#核心能力">核心能力</a> ·
-  <a href="#架構">架構</a> ·
-  <a href="#快速開始">快速開始</a> ·
-  <a href="#agents">遠端 Agent</a> ·
-  <a href="#控制台">控制台</a> ·
-  <a href="#免責聲明">免責聲明</a>
-</p>
+  <p>
+    <a href="https://spearhook.pages.dev/"><strong>線上展示（Live Demo）</strong></a> ·
+    <a href="#法律聲明">法律聲明</a> ·
+    <a href="#專案簡介">專案簡介</a> ·
+    <a href="#核心能力">核心能力</a> ·
+    <a href="#系統架構">系統架構</a> ·
+    <a href="#快速開始">快速開始</a> ·
+    <a href="#遠端-agent">遠端 Agent</a> ·
+    <a href="#控制台">控制台</a> ·
+    <a href="#常見問題faq">FAQ</a> ·
+    <a href="#進階文件索引">進階文件</a>
+  </p>
+</div>
 
 ---
 
 ## 法律聲明
 
-Spearhook 僅限用於獲得明確授權的安全測試、紅隊演練與釣魚意識培訓。
-
-未經明確授權，對系統、賬號或人員使用本軟體屬於違法行為。授權的取得及軟體的使用方式由使用者自行負責，作者與貢獻者不對任何濫用行為承擔責任。
-
-如無書面授權或其他可核驗的授權憑證，請勿使用 Spearhook。
+> [!WARNING]
+> **合規與授權聲明**：本專案僅供**已取得明確書面授權**的企業資安意識演練、紅藍對抗模擬與防禦驗證使用。請嚴格遵守所在國家或地區的法律法規，嚴禁將本工具用於任何未經授權的測試或非法活動。使用者須自行承擔一切使用責任。
 
 ---
 
 ## 專案簡介
 
-**Spearhook** 是一個自架的釣魚演練控制台，涵蓋著陸頁搭建、郵件投遞、開啟與點選追蹤、憑證採集以及提交即時通知。頁面既可執行於控制平面，也可部署至遠端 Agent。
+Spearhook 將授權安全演練全生命週期中的**公開線索蒐集、頁面範本建構、多節點部署、郵件投遞與追蹤、事件回收與告警通知**整合至同一控制面，並透過受控的 AI 工具呼叫（Tool Calling）能力降低重複性編排成本。
 
-若熟悉 [Gophish](https://github.com/gophish/gophish)：其側重於活動與模板管理；Spearhook 則面向演練全流程，提供帶 AI 鏡像的頁面庫、AI 助手維運、多 Agent 部署、即時 QR 中繼、AI 公開資訊收集、Webhook、IP 黑名單、稽核與角色管理。
+### 設計特色
 
-單一 Go 二進位內嵌前端（`frontend/dist`），在同一埠提供 API 與控制台。技術棧：Go 1.24 / Gin / GORM+SQLite / Next.js 靜態匯出 / 可選 Docker SDK。示範網址：[https://spearhook.pages.dev/](https://spearhook.pages.dev/)。
+- **單一二進位交付**：前端經 Next.js 靜態匯出後透過 `go:embed` 直接打包進 Go 執行檔，同時內嵌離線 IP 地理定位庫（`assets/qqwry.dat`）與 QR Code 中繼用戶端腳本包。
+- **控制面與執行面解耦**：演練專案既可在控制面本機以 Docker 容器或本機 Flask 程序運行，也可派發至多台異地部署的 `spearhook-agent` 節點執行，運行日誌與提交事件自動匯聚回控制面。
+- **AI 原生且嚴格受控**：內建對話式維運助手，強制透過平台註冊的白名單工具執行所有讀寫操作；高風險動作（如正式群發郵件活動、匯出提交紀錄）預設暫停並要求操作員於前端明確確認。
+- **開箱即用的安全治理**：支援 `admin` / `operator` 雙角色與資源歸屬隔離、AES-GCM 靜態加密儲存敏感金鑰與紀錄、僅追加不可刪除的稽核日誌，以及應用程式層與 Linux 主機防火牆雙層 IP 黑名單攔截。
+
+### 技術棧
+
+| 層級 | 核心技術 |
+| --- | --- |
+| 後端控制面 | Go 1.24、Gin、GORM、PostgreSQL 16、JWT、AES-GCM、chromedp、Docker SDK、gopsutil |
+| 前端控制台 | Next.js 16（靜態匯出）、React 19、TypeScript 5、Tailwind CSS、Radix UI、Zustand、Recharts、i18next |
+| 分散式節點 | Go 獨立靜態二進位（`cmd/spearhook-agent`），無外部執行期相依 |
+| 落地頁執行期 | Python 3 + Flask + Flask-CORS（本機程序或 Docker 容器） |
+| QR Code 擷取端 | Python 3 + `mss` + `Pillow` + `pyzbar` + `requests` |
+
+### 目錄結構
+
+```text
+spearhook_v2/
+├── main.go                    # 控制面入口：啟動自檢、資料庫遷移、API 路由與內嵌前端託管
+├── config/                    # config.yaml 載入、安全項檢查、PostgreSQL 連線池初始化
+├── models/                    # GORM 資料模型與自動遷移（30+ 核心業務與稽核資料表）
+├── handlers/                  # REST API、SSE 事件串流、AI 對話、專案/郵件/Agent/QR 處理器
+├── middleware/                # JWT 驗證、平台 Basic Auth、IP 黑名單攔截、操作稽核中介層
+├── platform/                  # 部署編排、Docker 建置、Agent 任務佇列、主機指標與 IP 守護
+├── chattools/                 # AI 工具註冊表、風險分級確認策略、System Prompt 與內建 Playbooks
+├── utils/                     # AES-GCM 加解密、HTML 抓取/改寫、郵件 HMAC 追蹤、LLM/搜尋用戶端、防火牆同步
+├── audit/                     # 不可變稽核日誌寫入封裝
+├── cmd/
+│   ├── spearhook-agent/       # 分散式輕量執行節點
+│   ├── generate-encryption-key/ # 256-bit 隨機加密金鑰產生工具
+│   ├── reset-password/        # 管理員強密碼重設工具
+│   └── migrate-db/            # 歷史 SQLite 資料庫遷移至 PostgreSQL 工具
+├── frontend/                  # Next.js 16 + React 19 前端專案（建置輸出至 frontend/dist）
+├── scripts/
+│   ├── setup.sh               # Go 後端環境初始化腳本
+│   ├── build-all.sh           # 前端打包 + 全平台（Linux/macOS/Windows）交叉編譯腳本
+│   ├── deploy.sh              # SSH 一鍵部署腳本（支援 binary 與 docker 模式）
+│   └── qr-relay/              # 本機 QR Code 螢幕擷取與上傳用戶端
+├── assets/                    # 內嵌離線 IP 歸屬地庫（qqwry.dat）與品牌資源
+├── docs/                      # 架構、部署、佔位符與展示託管進階文件
+├── Dockerfile                 # 多階段建置（Node 22 → Go 1.24 → Alpine 3.20 + Chromium + Python/Flask）
+├── docker-compose.yml         # PostgreSQL 16 + Spearhook 控制面編排檔
+├── config.yaml.example        # 控制面組態範本
+└── agent.yaml.example         # 分散式 Agent 組態範本
+```
 
 ---
 
 ## 核心能力
 
-- **AI 助手（AI Assistant）** — 自然語言維運助手（`/chat`），透過 SSE 逐 token 流式輸出。模型僅可呼叫白名單工具（`list_agents`、`clone_page`、`create_project`、`start_info_gather`、`create_mail_draft`、`send_mail_campaign`，以及 QR、憑證、黑名單等工具）。唯讀工具自動執行，破壞性操作需人工確認，所有寫操作均記入稽核日誌。助手不會直接生成 HTML；URL 鏡像由頁面庫管線處理。
-- **頁面庫 / AI 鏡像** — 上傳 HTML，或將公開登入頁、著陸頁 URL 經 AI 改寫後存入頁面庫（支援 OpenAI 相容 `chat/completions` 或 Anthropic `/messages`）。相對路徑 CSS 與靜態資源將按來源網站轉換為絕對位址，確保預覽樣式完整。
-- **專案** — 綁定頁面庫中的頁面，以 **Docker** 或**本機 Flask** 執行，支援 TLS、一個或多個 Agent 及 QR 佔位符。提交、日誌與部署資訊按專案彙總。
-- **郵件** — 支援多套 SMTP、模板、定時與群發；每個活動獨立追蹤開啟和點選（`/api/<slug>`）。可向 HTML 注入雜訊內容。追蹤公網地址與 HMAC 在「系統 → 郵件追蹤」中設定。
-- **推送通道** — 支援飛書、企業微信、Telegram、Slack、釘釘與 Discord。將 Webhook 綁定至專案，憑證提交時觸發通知；開啟或點選不會觸發。
-- **QR 釣魚** — 透過穩定地址 `/q/{slug}.png` 提供即時二維碼。本機指令碼上傳螢幕幀，頁面使用 `{{QR_RELAY_URL}}` / `{{QR_RELAY_IMG}}`。
-- **資訊收集** — 接入自有 AI 介面，並在「系統 → 搜尋設定」中選擇網路搜尋提供者（原生 `web_search`、DeepSeek Search、Brave、Tavily、Serper 或博查）。蒐集公開電子郵件地址、電話號碼及來源，匯出 CSV 後用於郵件投遞。
-- **Agent** — 在其他主機上執行 `spearhook-agent`。單一專案可部署至多個節點，單一節點也可承載多個專案。支援心跳；存取日誌寫入 `pending-logs.json`，待控制平面恢復後補傳。憑證提交即時轉發至控制平面；控制平面不可達時，訪客會收到 502（不提供提交佇列）。
-- **認證與角色** — JWT 登入；可選 HTTP Basic 外層驗證；**管理員 / 操作員**角色與歸屬隔離；稽核日誌僅可附加，產品內不可刪除。
-- **安全加固與維運** — 儀表盤與主機 CPU/記憶體監控、金鑰與密碼靜態加密、QQWry 定位、CSV 匯出、**IP 黑名單**（批次提交來源自動封鎖），以及多語言介面。AI 設定支援 OpenAI 相容與 Anthropic Messages，供頁面鏡像、AI 助手和資訊收集共用。
-
-**標準流程：** 設定 SMTP 與 Webhook → 鏡像或上傳頁面 → 建立專案（綁定 Agent 與推送通道）→ 傳送郵件 → 等待提交通知 → 檢視記錄。若出現大量提交，可將來源 IP 加入黑名單。
+- **AI 助手（`/chat`）**
+  - 空會話內建 Playbook 快捷範本（複製並部署、蒐集聯絡資訊、綁定通知通道），支援 SSE 逐 Token 串流輸出。
+  - 嚴格三級風險控管：**唯讀工具**自動執行；**寫入工具**透過平台流水線執行；**高風險工具**（`send_mail_campaign`、`export_credentials`）強制暫停等待人工確認。
+  - 支援長會話歷史自動摘要壓縮、工具呼叫輪次上限、請求頻率與單一使用者日配額限制，並統計各 AI 組態的 Token 消耗。
+- **頁面庫（`/workbench/page-builder`）**
+  - 支援對目標頁面進行快速靜態抓取，遇到前端渲染（SPA）頁面時自動退回無頭 Chromium（`chromedp`）渲染擷取。
+  - 支援上傳本機 HTML 檔案（最高 30 MB）並呼叫 AI 自動改寫表單提交路徑、補齊靜態資源絕對路徑（相容 OpenAI `chat/completions` 與 Anthropic `/messages`），透過 SSE 即時回報進度。
+  - 支援落地頁範本佔位符，於專案建置／部署時自動替換：`{{SUBMIT_URL}}`、`{{REDIRECT_URL}}`、`{{QR_RELAY_URL}}`、`{{QR_RELAY_IMG}}`。
+- **專案（`/projects`）**
+  - 支援三種運行模式：**本機 Docker**、**本機 Flask** 與 **分散式 Agent**（控制面於 `20000–30000` 埠號範圍內為每個節點自動分配獨立埠號）。
+  - 支援自訂路由、上傳掛載 SSL 憑證啟用 HTTPS、即時日誌與健康檢查；提交資料以僅追加加密事件表（`CredentialSubmissionEvent`）為單一事實來源，自動投影為帳號與嘗試檢視，並關聯 IP 歸屬地與郵件活動歸因。
+- **郵件（`/workbench/mail`、`/smtp-services`）**
+  - 管理多組加密儲存的 SMTP 寄信設定（API 永不回傳明文密碼）與可重複使用的郵件範本，支援立即群發與排程發送。
+  - 支援收件人級個人化變數（`{{email}}`、`{{sig}}`、`{{v}}`、`{{click_url}}`、`{{open_pixel}}`、`{{landing_url}}`），每個活動自動產生獨立追蹤路徑，透過 HMAC-SHA256 歸因開信／點擊／提交行為，並支援跳轉網域白名單驗證。
+- **推送通道（`/robots`）**
+  - 支援 **飛書、企業微信、釘釘、Telegram、Slack、Discord** 六大 Webhook 機器人，支援自訂通知語系、連通性測試、上下線開關與完整的推送請求／回應日誌。
+- **QR 即時中繼（`/workbench/qr-phishing`）**
+  - 控制面維護穩定的公開圖片網址（`/q/:slug`），搭配本機 Python 擷取端（`scripts/qr-relay/qr_relay.py`）定時擷取並僅上傳 QR Code 影像影格與心跳。
+  - 控制台支援 SSE 即時監控線上／過期狀態、歷史影格回溯與置頂、上傳 Token／存取 Slug 一鍵輪換。
+- **資訊蒐集（`/workbench/info-gathering`）**
+  - 非同步執行目標公開線索蒐集任務，支援 AI 原生聯網搜尋，或並發聚合多個獨立搜尋源（**DeepSeek Search、Brave、Tavily、Serper、博查 Bocha**），自動去重沉澱電子郵件、電話與來源連結。
+- **Agent（`/agents`）**
+  - 輕量級獨立 `spearhook-agent` 二進位檔，支援權杖註冊、心跳保活、任務租約拉取與集中日誌回傳；支援單一專案多節點與單一節點多專案混部。
+- **驗證與角色（`/users`、`/audit-logs`）**
+  - 支援平台前置 HTTP Basic Auth（預設開啟）+ JWT 登入態 + `admin` / `operator` 角色與資源歸屬隔離；稽核日誌僅追加、產品內不可刪除。
+- **安全加固與維運（`/`、`/ip-blacklist`）**
+  - 儀表板呈現主機 CPU／記憶體／磁碟 24 小時取樣趨勢（每 30 秒採樣一次），存取日誌按日輪替，內建離線 `qqwry.dat` 歸屬地庫，並支援 **IP 黑名單**（Gin 中介層 + Linux 主機 `iptables` 雙層防護）。
+  - 前端內建 **English、简体中文、繁體中文、日本語、한국어** 五種介面語言與純靜態離線展示模式。
 
 ---
 
-## 架構
+## 系統架構
 
-```text
-  瀏覽器（多語言 UI · JWT · 可選 Basic Auth）
-           │
-           ▼
-  控制平面  (Go / Gin · SQLite · 內嵌 Next UI · AI 助手 SSE)
-           │
-     ┌─────┴──────────────┐
-     ▼                    ▼
-  Docker / 本機 Flask   遠端 spearhook-agent
-     │                    │
-     └─────────┬──────────┘
-               ▼
-  憑證提交 · 存取日誌 · 郵件開啟/點選 · 即時 QR · Webhook
+```mermaid
+flowchart TB
+    subgraph Console["控制面（Go 單一二進位 + 內嵌 Next.js SPA）"]
+        UI["Web 控制台\nNext.js 16 / React 19 / 5 語系 i18n"]
+        API["Gin HTTP API\nJWT + 可選 Basic Auth + RBAC + 稽核日誌"]
+        AI["AI 編排引擎\nTool Calling / 風險分級確認 / SSE 串流"]
+        Sched["背景任務\n郵件排程 / 主機指標採樣 / 防火牆同步"]
+    end
+
+    subgraph Storage["資料與內建資產"]
+        PG[("PostgreSQL 16\n核心業務與稽核資料\nAES-GCM 敏感欄位加密")]
+        QQWRY["內嵌 qqwry.dat\n離線 IP 地理定位"]
+    end
+
+    subgraph Runtime["專案運行與派發層"]
+        LocalDocker["本機 Docker 容器\n動態產生 Flask 服務"]
+        LocalFlask["本機 Python Flask 程序"]
+        Agents["分散式節點 spearhook-agent\n心跳保活 / 任務租約 / 集中日誌回傳"]
+    end
+
+    subgraph External["外部能力整合"]
+        LLM["LLM 閘道\nOpenAI 相容 / Anthropic Messages"]
+        Search["聯網搜尋\n原生 / DeepSeek / Brave / Tavily / Serper / Bocha"]
+        SMTP["SMTP 郵件服務\n範本渲染與 HMAC 追蹤"]
+        Webhook["推送通道\n飛書 / 企微 / 釘釘 / Telegram / Slack / Discord"]
+        QR["本機 QR 擷取端\nscripts/qr-relay/qr_relay.py"]
+    end
+
+    UI <--> API
+    API <--> AI
+    API <--> PG
+    API --> QQWRY
+    Sched --> PG
+
+    API --> LocalDocker
+    API --> LocalFlask
+    API <--> Agents
+
+    AI <--> LLM
+    AI <--> Search
+    API --> SMTP
+    LocalDocker --> Webhook
+    LocalFlask --> Webhook
+    Agents --> API
+    QR --> API
 ```
-
-| 元件 | 職責 |
-|------|------|
-| 控制平面（`spearhook`） | 控制台、API、SQLite、郵件追蹤端點、QR 公網地址、AI 助手編排 |
-| Agent（`spearhook-agent`） | 邊緣著陸頁執行環境；主動連出至控制平面 |
-| 前端 | Next.js App Router → 靜態 `frontend/dist`，透過 `go:embed` 內嵌 |
-| AI 設定 | 同時僅啟用一個端點（OpenAI 相容或 Anthropic Messages），供頁面鏡像、AI 助手工具與資訊收集使用 |
-| 搜尋設定 | 資訊收集使用的網路搜尋：原生 `web_search` 或 DeepSeek / Brave / Tavily / Serper / 博查 |
 
 ---
 
 ## 快速開始
 
-支援 Linux、macOS 與 Windows。
+### 環境需求
 
-| 需求 | 說明 |
-|------|------|
-| 執行發行包 | 二進位 + `config.yaml` |
-| 從原始碼構建 | Go **1.24+**、Node.js（前端） |
-| Docker 執行模式 | 可存取 Docker Engine；僅使用本機 Flask 或 Agent 時無需安裝 |
-| 本機 Flask | `python3`，以及 `flask`、`flask_cors`、`requests` |
-| QR 截圖 | Python 3 + **工作台 → QR 釣魚** 下的 zip（或 [`scripts/qr-relay`](scripts/qr-relay/README.zh.md)）；macOS 解碼需要 `zbar` |
-| Agent | 需能透過 HTTP(S) 存取控制平面 |
+- **Docker 部署（推薦）**：Docker Engine 20.10+ 與 Docker Compose v2
+- **原始碼運行／開發**：
+  - Go `1.24+`、Node.js `22+`、PostgreSQL `16+`（控制面強制使用 PostgreSQL）
+  - 可選：Chromium（SPA 渲染抓取）、Python 3 + `flask`/`flask-cors`/`requests`（本機 Flask 模式）、Docker Daemon（本機 Docker 模式）
 
-| 用途 | 預設值 |
-|------|--------|
-| 控制台 / API | `:8000` |
-| 前端開發伺服器 | `:8081`，將 `/api` 代理至 `:8000` |
-| Agent 著陸頁埠 | 該主機 `20000–30000/TCP` |
+### 方式一：Docker Compose 一鍵啟動（推薦）
 
-### 1. 設定
+1. **準備組態檔並替換預設金鑰**
 
 ```bash
 cp config.yaml.example config.yaml
+# 如需產生 256-bit 隨機加密金鑰：
+go run ./cmd/generate-encryption-key
 ```
 
-部署前請替換以下佔位金鑰：
+編輯 `config.yaml`，務必替換 `security.*` 下的全部範例佔位金鑰。
 
-```yaml
-server:
-  port: 8000
-  gin_mode: release
+2. **建立 `.env` 並啟動容器**
 
-database:
-  path: ./data/fishing.db
-
-security:
-  encryption_key: replace-with-a-generated-key
-  jwt_secret: replace-with-a-long-random-secret
-  container_secret: replace-with-another-long-random-secret
-  agent_registration_token: replace-with-agent-registration-token
-  platform_basic_auth_enabled: true
-
-container:
-  ssl_cert_path: /app/certificates/cert.pem
-  ssl_key_path: /app/certificates/key.pem
+```env
+POSTGRES_DB=spearhook
+POSTGRES_USER=spearhook
+POSTGRES_PASSWORD=請替換為高強度隨機密碼
+TZ=Asia/Taipei
 ```
-
-加密金鑰可透過 `cmd/generate-encryption-key` 生成。郵件追蹤（公網地址、HMAC、跳轉白名單）在啟動後於「系統 → 郵件追蹤」中設定；YAML 僅作為初始值。開啟與點選路徑按活動生成。
-
-請勿提交 `config.yaml`、`data/` 或私鑰檔案（已在 `.gitignore` 中忽略）。
-
-### 2. 執行
 
 ```bash
-./spearhook
-# 或使用 ./scripts/build-all.sh 後生成的 ./release/ 發行包
+docker compose up -d --build
 ```
 
-啟動時若檢測到空金鑰或預設金鑰，會顯示警告。實驗室環境可確認繼續；生產環境請先更換金鑰。
+3. **取得初始管理員密碼**
 
-### 3. 從原始碼構建
+首次啟動會自動建立 `admin` 帳號，並將隨機初始密碼寫入 `./data/admin_password.txt`（權限 `0600`）：
 
 ```bash
+cat ./data/admin_password.txt
+```
+
+瀏覽器開啟 `http://<伺服器IP>:8000` 即可登入。若 `platform_basic_auth_enabled: true`（預設），瀏覽器會先彈出 HTTP Basic Auth 驗證框，輸入相同的 `admin` 與初始密碼即可進入。登入後建議立即修改密碼並刪除 `admin_password.txt`。
+
+### 方式二：原始碼本機開發
+
+```bash
+# 1. 設定 config.yaml 中的 PostgreSQL DSN 與安全金鑰
+cp config.yaml.example config.yaml
+
+# 2. 至少建置一次前端，供 go:embed 嵌入 frontend/dist
+cd frontend && npm ci && npm run build && cd ..
+
+# 3. 啟動後端控制面（預設監聽 :8000）
+go run .
+
+# 4. 可選：前端熱更新開發伺服器（監聽 :8081）
+cd frontend && npm run dev
+```
+
+健康檢查端點：`GET /healthz`（存活）與 `GET /readyz`（資料庫就緒）。
+
+### 方式三：跨平台編譯與 SSH 一鍵部署
+
+```bash
+# 前端打包 + 全平台（Linux/macOS/Windows）編譯控制面與 Agent 至 release/
 ./scripts/build-all.sh
+
+# SSH 一鍵部署（二進位 + systemd 模式）
+DB_DSN='host=127.0.0.1 port=5432 user=spearhook password=xxx dbname=spearhook sslmode=disable' \
+./scripts/deploy.sh binary <目標主機IP> root 22
+
+# SSH 一鍵部署（Docker 映像模式）
+DB_DSN='host=127.0.0.1 port=5432 user=spearhook password=xxx dbname=spearhook sslmode=disable' \
+INSTALL_DOCKER=1 ./scripts/deploy.sh docker <目標主機IP> root 22
 ```
 
-先構建前端，再生成控制平面與 Agent（Linux / Windows / darwin，amd64 與 arm64），並將兩個示例設定複製至 `release/`。
+### 首次登入後的標準演練流程
 
-僅啟動前端（API 已執行）：
+1. **設定系統基礎能力**：於 **系統 → AI 設定** 新增並測試模型；依需求於 **系統 → 搜尋設定** 啟用搜尋源；於 **系統 → 郵件追蹤** 填寫外部可達的 `public_base_url` 與跳轉網域白名單。
+2. **設定寄信與告警通道**：於 **SMTP 服務** 新增寄信帳號，於 **推送通道** 新增通知機器人。
+3. **準備落地頁範本**：於 **工作台 → 頁面建構器** 擷取目標頁面，或上傳本機 HTML 由 AI 自動改寫並入庫。
+4. **建立並運行演練專案**：於 **專案管理** 中選擇頁面與運行模式（本機 Docker／本機 Flask／遠端 Agent），按需綁定機器人、HTTPS 憑證或 QR 中繼。
+5. **發起演練與覆盤**：透過 **工作台 → 郵件演練** 或 **QR 中繼** 展開演練（亦可直接於 `/chat` 以自然語言一鍵編排），並於專案詳情、儀表板與稽核日誌中覆盤。
 
-```bash
-cd frontend && npm install && npm run dev   # http://127.0.0.1:8081
-```
+### 生產部署避坑清單
 
-### 4. 登入
+- **非互動式環境啟動（Docker / systemd）必先修改預設金鑰**：若 `config.yaml` 中 `security.*` 仍為空或範例預設值，啟動會彈出互動確認，在無 TTY 環境將直接中止啟動。
+- **本機 Docker 專案模式相依基礎映像 `python:3.9-slim`**：內網或離線環境請事先於主機執行 `docker pull python:3.9-slim`。
+- **反向代理須關閉緩衝以支援 SSE 即時串流**：AI 對話、頁面抓取改寫與 QR 狀態監控皆依賴 SSE。Nginx 參考組態：
+  ```nginx
+  location / {
+      proxy_pass http://127.0.0.1:8000;
+      proxy_http_version 1.1;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_buffering off;
+      proxy_cache off;
+      proxy_read_timeout 300s;
+  }
+  ```
+- **macOS / Windows 下使用 `docker-compose.yml` 的網路差異**：`docker-compose.yml` 預設使用 `network_mode: host` 以配合 Linux 主機埠號暴露。桌面版 Docker 建議改為明確 `ports: ["8000:8000"]`（並將 `SPEARHOOK_DB_DSN` 的 `host` 指向 `postgres`），或使用原始碼模式運行。
+- **妥善保管 `security.encryption_key`**：資料庫內加密欄位皆依賴該金鑰，**初始化後切勿隨意更換**並做好離線備份。
 
-開啟 `http://localhost:8000`（或已設定的埠）。首次啟動時，管理員密碼寫入：
+### 核心組態說明（`config.yaml`）
 
-```bash
-cat data/admin_password.txt
-```
+AI 模型、搜尋源與郵件追蹤設定於首次啟動後皆可在控制台熱更新；`config.yaml` 管理啟動期核心參數：
 
-請妥善儲存後刪除該檔案。後續可透過 `cmd/reset-password` 重設密碼。
+| 組態項 | 說明 | 環境變數覆寫 |
+| --- | --- | --- |
+| `server.port` | 控制面 HTTP 監聽埠（預設 `8000`） | — |
+| `server.gin_mode` | `debug` / `release` / `test` | — |
+| `database.dsn` | **必填**，PostgreSQL 連線字串 | `SPEARHOOK_DB_DSN` |
+| `database.path` | 資料目錄基準路徑（存取日誌、產物與初始密碼檔） | `SPEARHOOK_DB_PATH` |
+| `security.encryption_key` | AES-GCM 靜態加密主金鑰（**初始化後切勿隨意更換**） | — |
+| `security.jwt_secret` | JWT 簽章金鑰 | — |
+| `security.container_secret` | 落地頁容器向控制面換取回呼 Token 的共享金鑰 | — |
+| `security.agent_registration_token` | 遠端 Agent 首次註冊權杖（為空時退回 `container_secret`） | — |
+| `security.platform_basic_auth_enabled` | 是否啟用平台前置 Basic Auth 保護（預設 `true`） | — |
+| `chat.*` | 可選，調整 `max_tool_rounds`（`8`）、`rate_min_interval_ms`（`800`）、`daily_limit`（`200`）、`max_history_messages`（`40`） | — |
+| `search.*` | 可選，首次啟動種子至資料庫的搜尋源組態（`auto` / `deepseek` / `brave` / `tavily` / `serper` / `bocha`） | — |
+
+> [!TIP]
+> 無頭瀏覽器抓取 SPA 頁面時，可透過環境變數 `CHROME_PATH` 指定本機 Chromium／Chrome 路徑（Docker 映像內已預設 `/usr/bin/chromium`）。
 
 ---
 
-<a id="agents"></a>
-
 ## 遠端 Agent
 
-若不希望所有著陸頁都執行於控制平面，可將 **spearhook-agent** 部署到其他主機。單一專案可覆蓋多個節點，單一節點也可承載多個專案。每個綁定擁有獨立埠、版本與日誌。憑證提交會即時轉發至控制平面；存取日誌寫入 `pending-logs.json`，待控制平面恢復後補傳。
+### 1. 部署 `spearhook-agent`
 
-專案埠預設 **`20000–30000/TCP`**。Agent 主動連出至控制平面；存取者直接存取 Agent（若位於反向代理後，請設定 `advertise_host`，詳見完整手冊）。
-
-**權杖** — 在控制平面單獨設定 `security.agent_registration_token`（不要複用 JWT 金鑰），然後重啟。首次註冊使用該共享權杖；之後 `{work_dir}/state.json` 儲存該 Agent 的 ID 與權杖（Linux/macOS 許可權為 `0600`）。
-
-**啟動** — 執行 `./scripts/build-all.sh` 後：
-
-```bash
-cp agent.yaml.example agent.yaml
-```
+於遠端執行節點準備 `agent.yaml`（參考 [agent.yaml.example](agent.yaml.example)）：
 
 ```yaml
-server_url: http://control-plane.example.com:8000   # 末尾不要加斜槓
-registration_token: replace-with-a-long-random-agent-token
+server_url: http://<控制面位址>:8000
+registration_token: <與控制面 security.agent_registration_token 一致>
+name: node-tw-01                  # 可選，預設取主機名稱
+work_dir: ./data/agent            # 存放 state.json 與 pending-logs.json
+bind_host: 0.0.0.0                # 可選監聽位址
+advertise_host: <節點公網IP或網域>
+heartbeat_interval: 30s
+poll_interval: 3s
+tags: ["edge", "region-a"]
 ```
+
+啟動 Agent：
 
 ```bash
-chmod +x ./spearhook-agent
-./spearhook-agent -config ./agent.yaml
+./spearhook-agent -config agent.yaml
 ```
 
-```powershell
-.\spearhook-agent-windows-amd64.exe -config .\agent.yaml
+- **憑證與日誌緩衝**：首次啟動自動註冊並將長期憑證寫入 `work_dir/state.json`。控制面不可達時，存取日誌會暫存於 `pending-logs.json`，待連線恢復後自動補傳。
+- **提交即時代理**：表單提交資料即時轉發至控制面（不設本機提交佇列）；控制面不可達時，訪客會收到 HTTP `502`。
+
+### 2. QR Code 即時擷取端（`scripts/qr-relay`）
+
+於控制台 **工作台 → QR 中繼** 建立通道並複製上傳 Token，可直接由介面下載腳本壓縮包，或於 `scripts/qr-relay/` 目錄運行：
+
+```bash
+cd scripts/qr-relay
+cp config.example.yaml config.yaml
+# 填寫 platform_url 與 upload_token
+
+pip install -r requirements.txt
+# macOS 須額外安裝底層函式庫：brew install zbar
+# Windows 建議使用預編譯 wheel：pip install --only-binary=:all: -r requirements.txt
+# （Windows 下 libzbar-64.dll 需安裝 VC++ 2013 x64 執行期套件）
+
+# 可選：互動式框選螢幕實體像素區域並寫入 config.yaml
+python3 qr_relay.py --pick-region -c config.yaml
+
+# 啟動持續擷取、去重上傳與過期狀態心跳
+python3 qr_relay.py -c config.yaml
 ```
 
-日誌出現 `agent … connected to http://…` 即表示連線成功。
+### 3. 內建維運 CLI（`cmd/`）
 
-**控制台操作** — 在「系統 → Agent」等待狀態變為線上（約 90 秒無心跳則視為離線）。在「專案 → 新增」中選擇 Agent 並綁定頁面。每個 Agent 為獨立執行個體（`pending` → `deploying` → `running`）。修改專案會產生新版本；新增 Agent 會觸發部署；取消選擇會下達刪除。
-
-systemd、Windows 服務與反向代理設定：**[docs/agent-deployment.md](docs/agent-deployment.md)**。
+- **產生 256-bit 加密金鑰**：`go run ./cmd/generate-encryption-key`
+- **重設管理員密碼**（產生 20 位強密碼並寫入 `data/admin_password.txt`）：`go run ./cmd/reset-password`
+- **歷史 SQLite 遷移至 PostgreSQL**（保留 ID 與加密密文，建議先加 `-dry-run` 預檢）：
+  ```bash
+  go run ./cmd/migrate-db -sqlite ./data/fishing.db -postgres "host=127.0.0.1 port=5432 user=spearhook password=xxx dbname=spearhook sslmode=disable" -dry-run
+  ```
 
 ---
 
 ## 控制台
 
-| 區域 | 功能 |
-|------|------|
-| **儀表盤** | 計數與主機 CPU/記憶體 |
-| **AI 助手** | 透過自然語言呼叫平台工具（鏡像、建立專案、列出 Agent 等） |
-| **專案** | 概覽、部署、日誌、憑證記錄 |
-| **工作台 → 頁面製作** | 上傳 HTML，或透過 AI 鏡像 URL 入庫 |
-| **工作台 → 傳送郵件** | 模板、活動、開啟與點選 |
-| **工作台 → 資訊收集** | AI 網路搜尋 → 聯絡人 CSV |
-| **工作台 → QR 釣魚** | 即時二維碼中繼與截圖指令碼 zip |
-| **推送通道** | 憑證提交時觸發 Webhook |
-| **Agent** | 線上狀態與最後心跳 |
-| **IP 黑名單** | 將批次提交來源 IP 加入黑名單（從憑證記錄新增） |
-| **郵件服務** | SMTP 設定 |
-| **使用者 / AI 設定 / 郵件追蹤** | 管理員 |
-| **稽核日誌** | 管理員；產品內不可刪除 |
+內嵌 Next.js 16 單頁控制台與後端 API 共用同一連接埠，主要頁面如下：
 
-頁面預設提交至 `/api/submit`。HTML 佔位符：`{{SUBMIT_URL}}`、`{{REDIRECT_URL}}`、`{{QR_RELAY_URL}}`、`{{QR_RELAY_IMG}}` 等。郵件佔位符：`{{email}}`、`{{click_url}}`、`{{open_pixel}}`、`{{landing_url}}` 等。
+- `/` — 儀表板（運行專案、線上 Agent、活躍部署、當日事件及主機 24 小時資源趨勢）
+- `/chat` — AI 對話式編排工作台（Playbook 快捷範本與高風險操作人工確認）
+- `/workbench/page-builder`、`/workbench/mail`、`/workbench/info-gathering`、`/workbench/qr-phishing` — 演練工作台四大模組
+- `/projects`、`/agents`、`/robots`、`/smtp-services`、`/ip-blacklist` — 專案、節點與維運資源管理
+- `/users`、`/audit-logs`、`/ai-settings`、`/search-settings`、`/mail-tracking` — 管理員系統組態與合規稽核
 
-說明：[EN](docs/placeholders.en.md) · [简体中文](docs/placeholders.zh.md) · [繁體中文](docs/placeholders.zh-TW.md) · [日本語](docs/placeholders.ja.md) · [한국어](docs/placeholders.ko.md)
+### 測試與前端展示建置
 
-存取日誌：`data/access-YYYY-MM-DD.log`。儀表盤的高頻輪詢不會寫入控制台事件流，但仍會記錄到日誌檔案。
+```bash
+# 執行 Go 後端單元測試
+go test ./...
+
+# 執行前端工具函式與國際化字典測試
+cd frontend && npm run test:helpers
+
+# 建置純靜態唯讀展示站台（輸出至 frontend/demo-dist）
+cd frontend && npm run build:demo:root
+```
+
+唯讀線上展示位址：**[https://spearhook.pages.dev/](https://spearhook.pages.dev/)**（內建模擬資料，無需連接後端）。
+
+---
+
+## 常見問題（FAQ）
+
+<details>
+<summary><strong>Q1：開啟頁面時瀏覽器先彈出原生帳號密碼輸入框（HTTP Basic Auth）？</strong></summary>
+
+`config.yaml` 預設開啟 `security.platform_basic_auth_enabled: true` 作為外圍防護。驗證直接使用資料庫中的控制台帳號密碼（首次登入輸入 `admin` 與 `data/admin_password.txt` 中的初始密碼）。若已在內網或閘道層做好驗證，可改為 `false` 後重啟。
+
+</details>
+
+<details>
+<summary><strong>Q2：忘記管理員密碼怎麼辦？</strong></summary>
+
+在專案目錄執行 `go run ./cmd/reset-password`，工具會為 `admin` 重新產生 20 位強密碼並寫入 `data/admin_password.txt`。登入修改密碼後請及時刪除該檔案。
+
+</details>
+
+<details>
+<summary><strong>Q3：啟動時出現 <code>Security configuration warning</code> 並在 Docker / systemd 下直接結束？</strong></summary>
+
+表示 `config.yaml` 中的 `encryption_key`、`jwt_secret`、`container_secret` 或 `agent_registration_token` 仍為空或範例預設值。無 TTY 環境下安全確認無法互動會自動中止，請全部替換為隨機長字串後重啟。
+
+</details>
+
+<details>
+<summary><strong>Q4：擷取前端渲染（SPA）頁面時報錯或提示 Chromium 不可用？</strong></summary>
+
+SPA 頁面抓取依賴無頭 Chromium（`chromedp`）。官方 Docker 映像已內建 `/usr/bin/chromium`；原始碼或二進位部署請確認主機已安裝 Chromium／Chrome，並以 `CHROME_PATH` 指定執行檔路徑。
+
+</details>
+
+<details>
+<summary><strong>Q5：郵件追蹤連結指向 <code>127.0.0.1</code>，或點擊連結時提示跳轉遭拒？</strong></summary>
+
+前往控制台 **系統 → 郵件追蹤**，將 `public_base_url` 修改為外部可存取的控制面位址（含協定與埠號），並將落地頁網域加入允許跳轉白名單（`allow_redirect_hosts`）。
+
+</details>
+
+<details>
+<summary><strong>Q6：更換 <code>security.encryption_key</code> 後，原有機器人／SMTP／AI 設定異常？</strong></summary>
+
+敏感欄位使用 `security.encryption_key` 進行 AES-GCM 靜態加密，更換金鑰會導致歷史密文無法解密。請還原原金鑰，或於控制台重新儲存對應設定以使用新金鑰重新加密。
+
+</details>
+
+---
+
+## 進階文件索引
+
+| 文件 | 說明 |
+| --- | --- |
+| [docs/deployment.md](docs/deployment.md) | 生產環境一鍵部署（Docker／單一二進位）、升級與排障指南 |
+| [docs/agent-deployment.md](docs/agent-deployment.md) | 遠端 Agent 部署：systemd、Windows 服務與反向代理組態 |
+| [docs/placeholders.zh-TW.md](docs/placeholders.zh-TW.md) | 落地頁 HTML 與郵件範本佔位符完整參考 |
+| [docs/ai-native-architecture.md](docs/ai-native-architecture.md) | AI 原生編排架構設計（工具註冊、SSE 串流與執行邊界） |
+| [docs/ai-native-assessment.md](docs/ai-native-assessment.md) | AI Native 可行性評估與演進路徑 |
+| [docs/demo-hosting.md](docs/demo-hosting.md) | 唯讀展示站台於 Cloudflare Pages 的託管指南 |
+| [scripts/qr-relay/README.zh.md](scripts/qr-relay/README.zh.md) | QR Code 本機螢幕擷取端詳細使用說明 |
 
 ---
 
 ## 免責聲明
 
-Spearhook 僅用於獲得授權的紅隊釣魚演練與安全意識培訓。對未獲授權的人員或系統使用本軟體，風險與責任由使用者自行承擔；本專案不支援此類用途。
+Spearhook 僅供取得明確書面授權的資安意識培訓、內部演練與防禦驗證使用。嚴禁在未經授權的情況下對任何系統、帳號或個人部署或使用本軟體。使用者須獨立承擔遵守適用法律法規與組織合規要求的全部責任，專案作者及貢獻者不對任何濫用行為承擔責任。
 
-程式碼採用 [MIT License](LICENSE)。
-
-歡迎提交 Issue 與 PR；如遇問題，請透過 GitHub Issue 反饋。
+本專案基於 [MIT License](LICENSE) 開源。
