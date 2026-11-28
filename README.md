@@ -130,7 +130,6 @@ spearhook_v2/
   - JWT authentication, optional perimeter HTTP Basic Auth, `admin` / `operator` roles with ownership scoping, and append-only immutable audit logs.
 - **Security and operations (`/`, `/ip-blacklist`)**
   - Dashboard with 24-hour host CPU/memory/disk trends (30s sampling), daily rotating access logs, offline `qqwry.dat` IP geolocation, and **IP blacklist** enforcement at both the Gin middleware layer and Linux host firewall (`iptables`).
-  - Built-in 5-language UI (**English, 简体中文, 繁體中文, 日本語, 한국어**) and static offline Demo build mode.
 
 ---
 
